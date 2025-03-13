@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4"> Syarat dan Ketentuan Adopsi </h2>
+  
+  <p class="text-center"> 
+    Adopsi adalah bentuk dukungan terhadap kesejahteraan hewan, memberi mereka kesempatan kedua untuk mendapatkan kasih sayang dan rumah yang layak.
+  </p>
+
+  <ul class="list-group mb-4">
+    <li class="list-group-item"> 1. Adopsi ini <b>GRATIS</b> dan tidak dipungut biaya apapun. </li>
+    <li class="list-group-item"> 2. Hewan yang diadopsi tetap dalam <b>pengawasan</b> kami untuk memastikan keselamatannya. </li>
+    <li class="list-group-item"> 3. Para adopter <b>WAJIB PRO-STERIL</b> untuk menjaga populasi hewan. </li>
+    <li class="list-group-item"> 4. Adopter harus memberikan kehidupan layak, termasuk:
+      <ul>
+        <li> Makanan & minuman sesuai standar </li>
+        <li> Tempat tinggal yang layak </li>
+        <li> Tidak dirantai/dikurung sepanjang waktu </li>
+        <li> Vaksinasi rutin tahunan </li>
+        <li> Komitmen merawat saat sakit </li>
+      </ul>
+    </li>
+    <li class="list-group-item"> 5. <b>Dilarang</b> memindah-tangankan/memperjualbelikan hewan tanpa izin. </li>
+    <li class="list-group-item"> 6. Adopter wajib memberikan laporan kondisi hewan <b>minimal 1 bulan sekali</b> melalui email/Twitter/Facebook Animal Defenders. </li>
+    <li class="list-group-item"> 7. Jika ada masalah (perilaku hewan, lingkungan, dll.), wajib dilaporkan kepada Animal Defenders. </li>
+    <li class="list-group-item"> 8. Animal Defenders berhak mengawasi dan turun tangan dalam penyelesaian masalah terkait hewan yang diadopsi. </li>
+    <li class="list-group-item"> 9. Adopter harus <b>MENOLAK</b> perdagangan & konsumsi daging anjing/kucing. </li>
+    <li class="list-group-item"> 10. Hewan harus diberi makanan sesuai kodratnya:
+      <ul>
+        <li> Anjing: Omnivora (makan daging & sayuran) </li>
+        <li> Kucing: Karnivora (makan daging, bukan sayuran) </li>
+      </ul>
+    </li>
+    <li class="list-group-item"> 11. Animal Defenders berhak menolak permohonan adopsi. </li>
+    <li class="list-group-item"> 12. Kami berhak mengunjungi & mempublikasikan foto hewan yang diadopsi. </li>
+    <li class="list-group-item"> 13. Jika ditemukan kondisi hewan tidak layak (terlantar, sakit, eksploitasi), kami berhak mengambil kembali hewan & meminta kompensasi. </li>
+    <li class="list-group-item"> 14. Jika terjadi pelanggaran serius, maka jalur hukum dapat ditempuh. </li>
+    <li class="list-group-item"> 15. Calon adopter minimal berusia <b>18 tahun</b> & bertanggung jawab atas hewan peliharaannya. </li>
+    <li class="list-group-item"> 16. Hewan yang diadopsi <b>DILINDUNGI HUKUM</b> di Indonesia. </li>
+  </ul>
+
+  <form method="POST">
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="setuju" name="setuju">
+      <label for="setuju" class="form-check-label"> Dengan mencentang kotak ini, saya menyatakan telah membaca, memahami, dan menyetujui seluruh syarat dan ketentuan adopsi. </label>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">
+      Lanjutkan
+    </button>
+  </form>
+</div>
+
+<!-- 
+<div class="container mt-5">
+  <h2 class="text-center"> Syarat dan Ketentuan Adopsi </h2>
+  <p>
+    Syarat dan Ketentuan diambil dari 
+    <a href="https://animaldefendersindo.wixsite.com/adefenders/adoptions-cbqc" target="_blank"> Animals Defender </a> 
+    1. Adopsi adalah bentuk dukungan akan perbaikan animal welfare, yakni memberikan kesempatan kedua hewan-hewan ini untuk mendapatkan cinta dan rumah yang penuh kasih sayang. <br>
+    2. Adopsi ini GRATIS dan tidak dipungut biaya apapun. <br>
+    3. Adopsi ini gratis, namun tidak berarti hewan-hewan ini tidak dilindungi oleh hukum. Hewan yang diadopsi tetap akan ada dalam pengawasan kami untuk keberadaan dan keselamatannya. <br>
+    4. Para adopter WAJIB PRO-STERIL untuk menjaga populasi. <br>
+    5. Adopter wajib memberikan syarat dasar hidup layak bagi hewan-hewan yang diadopsi, antara lain namun tidak terbatas pada: makan dan minum layak standar hewan, tempat tinggal layak, tidak dirantai dan dikandang sepanjang waktu, wajib vaksinasi rutin tahunan, kesanggupan merawat jika nanti sakit dan diperlukan tindakan medis. <br>
+    6. Adopter DILARANG MEMINDAH-TANGANKAN/MENJUAL/tindakan apapun yang berkaitan dengan keberadaan hewan yang diadopsi tanpa sepengetahuan dan ijin dari Animal Defenders. <br>
+    7. Hewan yang diadopsi wajib dilaporkan kondisinya per 1 (satu) bulan sekali minimum via email, Twitter, maupun Facebook Animal Defenders. <br>
+    8. Jika ada permasalahan apapun, baik dari perilaku, perlawanan dari lingkungan, dan sejenisnya, adopter WAJIB memberitahukan kepada Animal Defenders untuk mencari solusi bersama. <br>
+    9. Animal Defenders berhak untuk turut campur dan mengawasi proses penyelesaian masalah yang terkait dengan hewan yang di adopsi dari Animal Defenders. <br>
+    10. Para adopter WAJIB MENDUKUNG ANTI PERDAGANGAN DAGING ANJING/KUCING dan TIDAK MENGKONSUMSI DAGING ANJING/KUCING sebagai bentuk komitmen dukungan terhadap animal welfare. <br>
+    11. Adopter tidak diperbolehkan memberikan menu yang melenceng dari kodrat hewani para hewan yang di adopsi, dalam hal ini, anjing merupakan hewan omnivore (makan daging dan sayuran) dan kucing merupakan hewan karnivora (pemakan daging/non-sayuran). Anjing wajib mendapatkan menu sehat dan tidak full vegetarian agar mendapatkan nutrisi yang diperlukan. <br>
+    12. Animal Defenders berhak menolak permintaan Anda untuk mengadopsi hewan. <br>
+    13. Animal Defenders berhak untuk mengunjungi hewan yang telah diadopsi secara berkala untuk memantau perkembangan hidupnya. Pemilik baru harus mengizinkan Animal Defenders untuk mengambil foto hewan tersebut dan mempublikasikan foto-foto terkait sebagai bukti pertanggungjawaban. <br>
+    14.Bila pada saat peninjauan Animal Defenders menemukan hewan dalam keadaan yang tidak sepatutnya, seperti tidak terawat, sakit parah yang tidak ditindaklanjuti, menderita luka serius akibat perbuatan manusia atau sengaja dijadikan indukan/pejantan, maka Animal Defenders berhak mengambil kembali hewan tersebut dan berhak meminta kompensasi biaya bila hewan tersebut perlu perawatan sebagai bentuk pertanggungjawaban pemilik. <br>
+    15. Kami HARUS memastikan keberadaan hewan adopsi ini dalam keadaan baik secara fisik dan mental, serta kejelasan keberadaan. Apabila ditemukan hal-hal yang melanggar kewajiban-kewajiban dasar ini, maka para pihak terkait, dalam hal ini Adopter dan Animal Defenders sepakat untuk dicarikan jalan keluar dan apabila menemukan jalan buntu akan ditempuh jalur hukum. <br>
+    16. Calon adopter minimal telah berusia 18 tahun dan sanggup bertanggungjawb sendiri atas hewan peliharaannya. <br>
+    17. Hewan-hewan yang diadopsi DILINDUNGI OLEH HUKUM POSITIF INDONESIA. <br>
+    18. Untuk mengadopsi anjing atau kucing dari Animal Defenders, silakan download form adopsi yang telah disediakan, kirimkan form adopsi yang telah diisi ke email indah@animal-defenders.net dan menunggu respons dari Animal Defenders. <br>
+    *Diadaptasi dari Animals Defender
+  </p>
+  <form method="POST">
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="setuju" name="setuju">
+      <label for="setuju" class="form-check-label"> Saya telah membaca dan menyetujui syarat dan ketentuan </label>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">
+      Lanjutkan
+    </button>
+  </form>
+</div>
+-->
+
+{% endblock %}

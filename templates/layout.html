@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>AdoptMe!</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='img/Logo AdoptMe v2.png') }}" type="image/x-icon"/>
+    
+    <!-- FontAwesome versi 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Responsive -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
+
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+
+  <style>
+    body {
+      background-color: #c6c6c6;
+    }
+
+    /* MOBILE VIEW */
+    .main-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+
+    /* HEADER */
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 10px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .logo img {
+      height: 70px;
+      width: 70px;
+    }
+
+    .header-text {
+      margin-left: 10px;
+    }
+
+    .header-text h1 {
+      font-size: 18px;
+      margin: 0;
+      color: #ff6600;
+    }
+
+    .header-text p {
+      font-size: 12px;
+      margin: 0;
+      color: #555;
+    }
+
+    /* NAVBAR */
+    .navbar.fixed-bottom {
+      background-color: white;
+      border-top: 1px solid #ddd;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+      padding: 10px 0;
+      width: 500px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 10px 10px 0 0;
+    }
+
+    .navbar-nav .nav-item {
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .navbar-nav .nav-link {
+      color: #333;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .navbar-nav .nav-link i {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .navbar-nav .nav-link.active {
+      color: #ffa500;
+    }
+
+    /* WHY CHOOSE */
+    .why-choose {
+      background-color: #f25c30;
+      color: white;
+      margin-top: 50px;
+    }
+
+    .icon-box {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .icon-box i {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .icon-box h5 {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .icon-box p {
+      font-size: 14px;
+    }
+
+    /* LOADING SCREEN */
+    #loading-screen {
+        position: fixed;
+        /* left: 390px; */
+        width: 500px;
+        height: 100%;
+        background: rgba(108, 108, 108, 0.455);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .loading-container {
+        max-width: 500px;
+        background-color: #ffffff;
+        padding: 30px;
+        text-align: center;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 6px solid #ddd;
+        border-top: 6px solid #007bff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+
+    
+  </style>
+<body>
+
+  <div class="main-container">
+
+    <div id="loading-screen">
+        <div class="loading-container">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <!-- * HEADER * -->
+    <header class="header-container">
+      <div class="logo">
+        <a href="/">
+          <img src="{{ url_for('static', filename='img/Logo AdoptMe v2 (no bg).png') }}" alt="AdoptMe Logo">
+        </a>
+      </div>
+      <div class="header-text">
+        <h1>AdoptMe!</h1>
+        <p>Your Trusted Pet Adoption Platform</p>
+      </div>
+    </header>
+
+    <!-- * CONTENT * -->
+    <div id="content">
+      {% block content %}{% endblock %}
+    </div>
+
+    <!-- * NAVBAR * -->
+    <nav class="navbar fixed-bottom bg-light">
+      <div class="container-fluid">
+        <ul class="navbar-nav d-flex flex-row justify-content-around w-100">
+          
+          <!-- Home -->
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == url_for('user.home') %}active{% endif %}" href="{{ url_for('user.home') }}">
+              <i class="fas fa-home"></i>
+              <p>Home</p>
+            </a>
+          </li>
+
+          <!-- Animals -->
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == url_for('animal.animals') %}active{% endif %}" href="{{ url_for('animal.animals') }}">
+              <i class="fas fa-paw"></i>
+              <p>Hewan</p>
+            </a>
+          </li>
+
+          <!-- Compare -->
+          <li class="nav-item">
+            <a class="nav-link {% if request.path.startswith(url_for('animal.select_animals')) %}active{% endif %}" href="{{ url_for('animal.select_animals') }}">
+              <i class="fas fa-exchange-alt"></i>
+              <p>Bandingkan</p>
+            </a>
+          </li>
+
+          <!-- Akun -->
+          {% if not session.get("user_id") %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == url_for('auth.login') %}active{% endif %}" href="{{ url_for('auth.login') }}">
+              <i class="fas fa-user-alt"></i>
+              <p>Akun</p>
+            </a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == url_for('user.user_profile') %}active{% endif %}" href="{{ url_for('user.user_profile') }}">
+              <i class="fas fa-user-alt"></i>
+              <p>Akun</p>
+            </a>
+          </li>
+          {% endif %}
+
+        </ul>
+      </div>
+    </nav>
+
+
+
+    <!-- * Section: Kenapa AdoptMe * -->
+    <section class="why-choose py-5">
+      <div class="container text-center">
+        <h2 class="fw-bold text-white mb-4">Kenapa Harus AdoptMe?</h2>
+        <div class="row justify-content-center">
+
+          <!-- Kartu 1 -->
+          <div class="col-12 col-md-4 mb-4">
+            <div class="icon-box">
+              <i class="fas fa-thumbs-up"></i>
+              <h5>Quality Services</h5>
+              <p>Pelayanan terbaik dengan kualitas tinggi.</p>
+            </div>
+          </div>
+
+          <!-- Kartu 2 -->
+          <div class="col-12 col-md-4 mb-4">
+            <div class="icon-box">
+              <i class="fas fa-users"></i>
+              <h5>Professional Staff</h5>
+              <p>Tim yang profesional dan bertanggung jawab.</p>
+            </div>
+          </div>
+
+          <!-- Kartu 3 -->
+          <div class="col-12 col-md-4 mb-4">
+            <div class="icon-box">
+              <i class="fas fa-heart"></i>
+              <h5>Melayani dengan Hati</h5>
+              <p>Memberikan pelayanan dengan integritas tinggi.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(() => {
+                document.getElementById("loading-screen").style.display = "none";
+                document.getElementById("content").style.display = "block";
+            }, 1000);
+        });
+    </script>
+
+    </div>
+  </body>
+</html>

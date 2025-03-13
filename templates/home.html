@@ -1,0 +1,197 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+  h2 {
+    color: rgb(255, 149, 0);
+    font-weight: bold;
+  }
+
+  /* CAROUSEL */
+  #carousel .carousel-inner .carousel-item img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+  }
+
+  /* ARTICLE */
+  .article-container {
+    max-width: 500px;
+    margin: 0 auto; /* Agar tetap di tengah */
+  }
+
+  .text-smaller {
+    font-size: 0.85rem; /* Ukuran teks lebih kecil */
+  }
+  .text-left {
+    text-align: left;
+  }
+
+</style>
+
+
+<!-- * Carousel * -->
+<div id="carousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="{{ url_for('static', filename='img/banner1.png') }}" class="d-block w-100"/>
+    </div>
+    <div class="carousel-item">
+      <img src="{{ url_for('static', filename='img/banner2.png') }}" class="d-block w-100"/>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<!-- * Show Animals * -->
+<div class="container mt-4">
+    <h2 class="text-center">Animals for Adopt</h2>
+
+    <!-- Container untuk Menampilkan Hewan -->
+    <div id="animalsList" class="animal-show d-flex flex-wrap justify-content-center"></div>
+</div>
+
+<!-- * Article * -->
+<div class="container mt-5 article-container">
+  <h2 class="text-center">
+    Article for Adopt
+  </h2>
+
+  <div class="row">
+
+    <div class="col-12 col-sm-6 mb-4">
+      <div class="card ">
+          <img src="{{ url_for('static', filename='img/image.png') }}" class="card-img-top" alt="Gambar makanan sehat untuk anabul">
+        <div class="card-body">
+          <h5 class="card-title"> Tips n' Trick Memandikan Anabul </h5>
+          <p class="card-text"> Pelajari bagaimana memandikan anabul yang baik dan benar. </p>
+          <a href="#" class="btn btn-primary"> Baca Artikel </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 mb-4">
+      <div class="card ">
+          <img src="{{ url_for('static', filename='img/image.png') }}" class="card-img-top" alt="Gambar makanan sehat untuk anabul">
+        <div class="card-body">
+          <h5 class="card-title"> 5 Makanan Sehat untuk Anabul Kamu </h5>
+          <p class="card-text"> Makanan sehat dan bergizi untuk pertumbuhan anabul. </p>
+          <a href="#" class="btn btn-primary"> Baca Artikel </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 mb-4">
+      <div class="card ">
+          <img src="{{ url_for('static', filename='img/image.png') }}" class="card-img-top" alt="Gambar makanan sehat untuk anabul">
+        <div class="card-body">
+          <h5 class="card-title"> Mengapa harus mengadopsi hewan? </h5>
+          <p class="card-text"> Pentingnya mengadopsi hewan. </p>
+          <a href="#" class="btn btn-primary"> Baca Artikel </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+<script>
+
+    // Fungsi untuk memformat tanggal lahir dari "YYYY-MM-DD" ke "DD Month YYYY"
+    function formatDate(isoDate) {
+      if (!isoDate) return "Tanggal tidak tersedia";
+
+      const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      const date = new Date(isoDate);
+      return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+    }
+    
+    // Fungsi untuk menghitung usia
+    function calculateAge(datebirth) {
+        if (!datebirth) return "";
+
+        const birthDate = new Date(datebirth);
+        const today = new Date();
+
+        let years = today.getFullYear() - birthDate.getFullYear();
+        let monthsDiff = today.getMonth() - birthDate.getMonth();
+
+        if (today.getDate() < birthDate.getDate()) monthsDiff--;
+        if (monthsDiff < 0) {
+          years--; 
+          monthsDiff += 12; 
+        }
+
+        return years > 0 ? `(${years} Tahun, ${monthsDiff} Bulan)` : `(${monthsDiff} Bulan)`;
+    }
+
+    $(document).ready(function () {
+      function loadAnimals() {
+          $.ajax({
+              url: "/get_animals",
+              type: "GET",
+              data: { 
+                sort_by: "date_added", 
+                order: "desc"
+              },
+              dataType: "json",
+              success: function (data) {
+                  let animalsList = $("#animalsList");
+                  animalsList.empty();
+
+                  if (data.animals.length === 0) {
+                      animalsList.html("<p class='text-center'>Tidak ada hewan yang tersedia.</p>");
+                      return;
+                  }
+
+                  $.each(data.animals, function (index, animal) {
+                      let sexIcon = animal.sex === "Jantan"
+                          ? '<i class="fas fa-mars text-primary"></i>'  // Ikon jantan
+                          : '<i class="fas fa-venus text-danger"></i>'; // Ikon betina
+
+                      let contactName = animal.contact?.name || "Tidak tersedia";
+                      let city = animal.address?.city || "Tidak tersedia";
+
+                      let card = `
+                          <a href="/details/${animal._id}" class="card m-2 col-lg-2 text-decoration-none" style="width: 12rem;">
+                              <div class="card-body d-flex flex-column align-items-center">
+                                  <div class="img-container">
+                                      <img src="/static/uploads/${animal.image}" class="card-img-top border-1" alt="Gambar ${animal.name}">
+                                  </div>
+                                  <div class="text-container mt-2">
+                                      <h5 class="card-title">${animal.name}</h5>
+                                      <p class="mb-1">${sexIcon} ${animal.sex}</p>
+                                      <hr>
+                                      <p class="mb-1 text-smaller">${contactName}</p>
+                                      <p class="mb-1 text-smaller"><i class="fas fa-map-marker-alt text-secondary me-1"></i>${city}</p>
+                                  </div>
+                              </div>
+                          </a>`;
+                      animalsList.append(card);
+                  });
+              },
+              error: function (e) {
+                  console.error("Error:", e);
+              }
+          });
+      }
+
+      // Panggil fungsi untuk pertama kali (tanpa filter, hanya sorting)
+      loadAnimals();
+  });
+
+
+</script>
+
+
+
+{% endblock %}

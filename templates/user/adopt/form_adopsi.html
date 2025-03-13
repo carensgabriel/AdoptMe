@@ -1,0 +1,151 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+    #loading-screen {
+        position: fixed;
+        width: 500px;
+        height: 100%;
+        background: rgba(108, 108, 108, 0.455);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .loading-container {
+        max-width: 500px;
+        background-color: #ffffff;
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 6px solid #ddd;
+        border-top: 6px solid #007bff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Formulir Adopsi</h2>
+  
+  <form id="adoption-form" class="p-4 shadow-sm rounded bg-light">
+    
+    <!-- * DATA CALON ADOPTER * -->
+    <h4 class="mb-3">Data Diri Calon Adopter</h4>
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" id="namaAdopter" name="namaAdopter" placeholder="Nama Lengkap" autocomplete="off" required>
+      <label for="namaAdopter">Nama Lengkap</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="tel" class="form-control" id="telpAdopter" name="telpAdopter" 
+         placeholder="(08xxx)" autocomplete="off" maxlength="16" required 
+         pattern="08[0-9]{8,13}" title="Masukkan nomor HP yang valid!">
+      <label for="telpAdopter">No. HP (08xxx)</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="email" class="form-control" id="emailAdopter" name="emailAdopter" placeholder="Email" autocomplete="off" required>
+      <label for="emailAdopter">Email</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" id="alamatAdopter" name="alamatAdopter" placeholder="Alamat" autocomplete="off" required>
+      <label for="alamatAdopter">Alamat</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" id="pekerjaanAdopter" name="pekerjaanAdopter" placeholder="Pekerjaan" autocomplete="off" required>
+      <label for="pekerjaanAdopter">Pekerjaan</label>
+    </div>
+
+    <div class="mb-3">
+      <label for="tempatTinggal">Dimanakah Anda tinggal?</label>
+      <select name="tempatTinggal" id="tempatTinggal" class="form-select" required>
+        <option value="" selected disabled>Pilih tempat tinggal...</option>
+        <option value="dog-friendly apartment">Dog-Friendly Apartment</option>
+        <option value="kost">Kost</option>
+        <option value="rumah">Rumah</option>
+      </select>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- * DATA HEWAN * -->
+    <h4 class="mb-3">Data Hewan yang Ingin Diadopsi</h4>
+
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" name="namaHewan" id="namaHewan" 
+          value="{{ animal['name'] }}" readonly>
+      <label for="namaHewan">Nama Hewan</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" name="jenisKelamin" id="jenisKelamin" 
+          value="{{ animal['sex'] }}" readonly>
+      <label for="jenisKelamin">Jenis Kelamin</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" name="spesiesHewan" id="spesiesHewan" 
+          value="{{ animal['breed'] }}" readonly>
+      <label for="spesiesHewan">Jenis Keturunan</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100 mt-3">Kirim Formulir</button>
+
+  </form>
+</div>
+
+
+<script>
+  $(document).ready(function() {
+    $("form").submit(function(e) {
+      e.preventDefault(); // Mencegah reload halaman
+
+      let formData = {
+        namaAdopter: $("#namaAdopter").val(),
+        telpAdopter: $("#telpAdopter").val(),
+        emailAdopter: $("#emailAdopter").val(),
+        pekerjaanAdopter: $("#pekerjaanAdopter").val(),
+        tempatTinggal: $("#tempatTinggal").val(), // Mengambil tempat tinggal
+        namaHewan: $("#namaHewan").val(),
+        spesiesHewan: $("#spesiesHewan").val(),
+        jenisKelamin: $("#jenisKelamin").val()
+      };
+
+      $.ajax({
+        url: "/submit_adoption",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(formData),
+        success: function(response) {
+          alert(response.message);
+          if (response.success) {
+            window.location.href = "/home"; // Redirect setelah sukses
+          }
+        },
+        error: function(xhr) {
+          alert("Terjadi kesalahan: " + xhr.responseJSON.message);
+        }
+      });
+    });
+  });
+</script>
+
+
+{% endblock %}

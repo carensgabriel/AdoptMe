@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1>User Profile</h1>
+
+<a class="nav-link {% if request.path == url_for('auth.logout') %}active{% endif %}" href="{{ url_for('auth.logout') }}">
+  <button type="submit" class="btn btn-primary mt-4 w-100"> Logout <i class="fa-solid fa-arrow-right"></i></button>
+</a>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Comparison of Selected Animals</h2>
+
+    <div class="row justify-content-center" id="animalsContainer">
+        <p class="text-center">Loading animals...</p>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+$(document).ready(function () {
+    let selectedAnimals = JSON.parse(localStorage.getItem("comparedAnimals")) || [];
+
+    if (selectedAnimals.length === 0) {
+        $("#animalsContainer").html("<p class='text-center'>No animals selected for comparison.</p>");
+        return;
+    }
+
+    $.ajax({
+        url: "/compare/selected_animals",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ selected_animals: selectedAnimals }),
+        dataType: "json",
+        success: function (response) {
+            if (response.success) {
+                let animalsContainer = $("#animalsContainer");
+                animalsContainer.empty();
+
+                response.animals.forEach(animal => {
+                    let card = `
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <div class="card text-center shadow-sm p-2">
+                                <div class="img-container">
+                                    <img src="/static/uploads/${animal.image}" 
+                                         class="card-img-top border-1 rounded" 
+                                         alt="Gambar ${animal.name}">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">${animal.name}</h5>
+                                    <p><strong>Species:</strong> ${animal.species}</p>
+                                    <p><strong>Age:</strong> ${animal.datebirth}</p>
+                                </div>
+                            </div>
+                        </div>`;
+                    animalsContainer.append(card);
+                });
+            } else {
+                $("#animalsContainer").html("<p class='text-center text-danger'>Failed to load data.</p>");
+            }
+        },
+        error: function (xhr) {
+            console.error("Error fetching selected animals:", xhr.responseText);
+            $("#animalsContainer").html("<p class='text-center text-danger'>Failed to load data.</p>");
+        }
+    });
+});
+
+</script>
+
+{% endblock %}

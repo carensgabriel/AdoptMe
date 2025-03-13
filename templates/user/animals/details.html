@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container p-5">
+    <div class="text-center">
+        <img id="animal-image" class="img-fluid rounded border" style="width: 100%; max-width: 350px; height: auto; object-fit: cover;">
+    </div>
+
+    <!-- Header Details -->
+    <div class="row align-items-center mt-4">
+        <div class="col-md-8">
+            <!-- Nama Hewan -->
+            <h3 class="fw-bold" id="animal-name"></h3>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <!-- Status Adopsi -->
+            <span id="adoption-status" class="badge"></span>
+        </div>
+    </div>
+
+    <!-- Nama Kota -->
+    <p class="text-muted" id="animal-city"></p>
+    <!-- Status Hewan -->
+    <div class="d-flex align-items-center gap-3 mt-2" id="animal-status"></div>
+    <!-- Divider -->
+    <hr class="mt-2">
+    <!-- Informasi Hewan -->
+    <div class="mt-2">
+        <p><strong>Deskripsi:</strong><br> <span id="animal-desc"></span></p>
+        <p><strong>Jenis Kelamin:</strong><br> <span id="animal-sex"></span></p>
+        <p><strong>Jenis Keturunan:</strong><br> <span id="animal-breed"></span></p>
+        <p><strong>Umur:</strong><br><span id="animal-datebirth"></span></p>
+
+        <p><strong>Lokasi Lengkap:</strong><br> 
+            <span id="animal-address"></span>
+        </p>
+
+        <p><strong>Kontak Shelter/Pemilik:</strong><br> 
+            <i class="fas fa-user"></i> <span id="owner-name"></span><br>
+            <i class="fas fa-phone"></i> <a href="#" id="owner-whatsapp" target="_blank"><span id="owner-phone"></span></a><br>
+            <i class="fas fa-envelope"></i> <a href="#" id="owner-email"></a>
+        </p>
+
+        <div class="mt-4">
+            <hr class="mt-4">
+            <a href="#" id="btn-adopt" class="btn btn-success btn-md me-3">Adopsi</a>
+            <a href="/compare" class="btn btn-outline-secondary btn-md">Bandingkan</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    
+    // Fungsi untuk memformat tanggal dari "YYYY-MM-DD" ke "DD Month YYYY"
+    function formatDate(isoDate) {
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const date = new Date(isoDate);
+        return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+    }
+
+    // Fungsi untuk menghitung umur dari tanggal lahir
+    function calculateAge(datebirth) {
+        if (!datebirth) return "";
+
+        const birthDate = new Date(datebirth);
+        const today = new Date();
+
+        let years = today.getFullYear() - birthDate.getFullYear();
+        let monthsDiff = today.getMonth() - birthDate.getMonth();
+
+        if (today.getDate() < birthDate.getDate()) monthsDiff--;
+        if (monthsDiff < 0) { years--; monthsDiff += 12; }
+
+        return years > 0 ? `(${years} Tahun, ${monthsDiff} Bulan)` : `(${monthsDiff} Bulan)`;
+    }
+
+    $(document).ready(function() {
+        const animalId = "{{ animal_id }}";  // Ambil ID dari Python
+
+        $.ajax({
+            url: `/details/${animalId}?format=json`,
+            type: "GET",
+            dataType: "json",
+            success: function (animal) {
+                $("#animal-image").attr("src", "/static/uploads/" + (animal.image || "default.jpg"));
+                $("#animal-name").text(animal.name || "Nama tidak tersedia");
+                $("#animal-city").text(animal.address?.city || "Lokasi tidak tersedia");
+                $("#animal-desc").text(animal.desc || "Deskripsi tidak tersedia");
+                $("#animal-sex").text(animal.sex || "Tidak diketahui");
+                $("#animal-breed").text(animal.breed || "Tidak diketahui");
+                $("#animal-datebirth").text(`${formatDate(animal.datebirth)} ${calculateAge(animal.datebirth)}` || "Tanggal lahir tidak tersedia");
+
+                if (animal.address) {
+                    $("#animal-address").text(
+                        `${animal.address.street || "Alamat tidak tersedia"}, ` +
+                        `${animal.address.city || "-"}, ${animal.address.province || "-"}, ` +
+                        `${animal.address.postal_code || "-"}, ${animal.address.country || "-"}`
+                    );
+                }
+
+                if (animal.contact) {
+                    $("#owner-name").text(animal.contact.name || "Nama tidak tersedia");
+                    $("#owner-whatsapp").attr("href", animal.contact.phone ? `https://wa.me/${animal.contact.phone.replace(/\D/g, '')}` : "#").text(animal.contact.phone || "Telepon tidak tersedia");
+                    $("#owner-email").attr("href", `mailto:${animal.contact.email}`).text(animal.contact.email || "Email tidak tersedia");
+                }
+
+                $("#btn-adopt").attr("href", "/adopt/" + (animal._id || ""));
+
+                let statusIcons = {
+                    true: '<i class="fas fa-check-circle text-success"></i>',
+                    false: '<i class="fas fa-times-circle text-danger"></i>' 
+                };
+
+                // Buat HTML untuk status Steril, Vaksin, Microchip
+                let status = `
+                    <p>Steril ${statusIcons[animal.status.steril_status]}</p>
+                    <p>Vaksin ${statusIcons[animal.status.vaccine_status]}</p>
+                    <p>Microchip ${statusIcons[animal.status.microchip_status]}</p>
+                `;
+
+                // Tampilkan status di halaman
+                $("#animal-status").html(status);
+
+                // Atur pengecualian untuk adoption_status
+                let adoptionStatusClass = animal.status.adoption_status ? "bg-danger" : "bg-success";
+                let adoptionStatusText = animal.status.adoption_status ? "Not Available" : "Available";
+
+                $("#adoption-status").text(adoptionStatusText).addClass(adoptionStatusClass);
+            },
+            error: function (err) {
+                console.error("Gagal mengambil data:", err);
+            }
+        });
+    });
+
+</script>
+
+{% endblock %}
