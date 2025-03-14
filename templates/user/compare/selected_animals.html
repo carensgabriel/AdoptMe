@@ -35,16 +35,14 @@ $(document).ready(function () {
                 response.animals.forEach(animal => {
                     let card = `
                         <div class="col-md-4 col-sm-6 mb-3">
-                            <div class="card text-center shadow-sm p-2">
+                            <div class="card shadow-sm p-2">
                                 <div class="img-container">
-                                    <img src="/static/uploads/${animal.image}" 
-                                         class="card-img-top border-1 rounded" 
-                                         alt="Gambar ${animal.name}">
+                                    <img src="/static/uploads/${animal.image}" class="card-img-top border-1 rounded" alt="Gambar ${animal.name}">
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title">${animal.name}</h5>
-                                    <p><strong>Species:</strong> ${animal.species}</p>
-                                    <p><strong>Age:</strong> ${animal.datebirth}</p>
+                                    <p>${animal.breed}</p>
+                                    <p>${animal.datebirth}</p>
                                 </div>
                             </div>
                         </div>`;

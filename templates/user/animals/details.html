@@ -97,6 +97,7 @@
                 // Atur pengecualian untuk adoption_status
                 let adoptionStatusClass = animal.status.adoption_status ? "bg-danger" : "bg-success";
                 let adoptionStatusText = animal.status.adoption_status ? "Not Available" : "Available";
+                let datebirth = new Date(animal.datebirth.$date);
 
                 $("#adoption-status").text(adoptionStatusText).addClass(adoptionStatusClass);                
                 $("#animal-image").attr("src", "/static/uploads/" + (animal.image || "default.jpg"));
@@ -105,7 +106,7 @@
                 $("#animal-desc").text(animal.desc || "Deskripsi tidak tersedia");
                 $("#animal-sex").text(animal.sex || "Tidak diketahui");
                 $("#animal-breed").text(animal.breed || "Tidak diketahui");
-                $("#animal-datebirth").text(`${formatDate(animal.datebirth)} ${calculateAge(animal.datebirth)}`);
+                $("#animal-datebirth").text(`${formatDate(datebirth)} ${calculateAge(datebirth)}`);
 
                 if (animal.address) {
                     $("#animal-address").text(

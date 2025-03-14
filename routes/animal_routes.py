@@ -117,7 +117,7 @@ def select_animals():
     try:
 
         """Menampilkan daftar hewan untuk dibandingkan"""
-        animals = list(mongo.db.animals.find({}, {"_id": 1, "name": 1, "species": 1, "datebirth": 1, "image": 1}))
+        animals = list(mongo.db.animals.find({}, {"_id": 1, "name": 1, "breed": 1, "datebirth": 1, "image": 1}))
 
         for animal in animals:
             animal["_id"] = str(animal["_id"])
