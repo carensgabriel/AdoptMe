@@ -4,16 +4,19 @@
 <div class="container my-4">
     <h2 class="text-center mb-4"> {{ title }} </h2>
     <form id="compareForm">
-        <div class="animal-show d-flex flex-wrap justify-content-center">
+        <!-- Container grid untuk hewan -->
+        <div class="animal-show">
             {% for animal in animals %}
-            <div class="card m-1 col-lg-2 text-decoration-none" style="width: 12rem;">
+            <div class="card text-decoration-none">
                 <div class="card-body d-flex flex-column align-items-center">
                     <div class="img-container">
-                        <img src="{{ url_for('static', filename='uploads/' + animal['image']) }}" class="card-img-top" alt="Gambar {{ animal['name'] }}">
+                        <img src="{{ url_for('static', filename='uploads/' + animal['image']) }}" class="card-img-top border-1" alt="Gambar {{ animal['name'] }}">
                     </div>
-                    <h5 class="card-title"> {{ animal['name'] }} </h5>
-                    <p class="card-text"> {{ animal['species'] }}</p>
-                    <p class="card-text"> {{ animal['datebirth'] }}</p>
+                    <div class="text-container mt-2">
+                        <h5 class="card-title"> {{ animal['name'] }} </h5>
+                        <p class="mb-1 text-smaller"> {{ animal['species'] }}</p>
+                        <p class="mb-1 text-smaller"> {{ animal['datebirth'] }}</p>
+                    </div>
 
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="animal_{{ loop.index }}" name="selected_animals" value="{{ animal['_id'] }}">
@@ -23,25 +26,24 @@
             </div>
             {% endfor %}
         </div>
+
         <div class="text-center">
             <button type="submit" class="btn btn-primary mt-3 mb-5"> Compare Selected Animals </button>
         </div>
     </form>
 </div>
 
-
 <!-- JQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-
 $(document).ready(function () {
     $("#compareForm").submit(function (e) {
         e.preventDefault();
 
         let selectedAnimals = [];
-            $("input[name='selected_animals']:checked").each(function () {
-                selectedAnimals.push($(this).val());
+        $("input[name='selected_animals']:checked").each(function () {
+            selectedAnimals.push($(this).val());
         });
 
         if (selectedAnimals.length < 2) {
@@ -50,11 +52,9 @@ $(document).ready(function () {
         }
 
         localStorage.setItem("comparedAnimals", JSON.stringify(selectedAnimals));
-
         window.location.href = "/compare/selected_animals";
     });
 });
-
 </script>
 
 {% endblock %}

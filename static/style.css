@@ -123,21 +123,21 @@
 
 /** --------------- ANIMAL CARDS --------------- */
 
-/* Container grid agar berada di tengah */
+/* Container grid agar tetap berada di tengah */
 .animal-show {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr); /* 2 kolom */
+  gap: 8px; /* Jarak antar card lebih rapat */
   justify-content: center;
   align-items: center;
   padding: 10px;
-  max-width: 500px;
-  margin: 0 auto;
+  max-width: 500px; /* Sesuai dengan batasan mobile view */
+  margin: 0 auto; /* Pusatkan di tengah */
 }
 
-/* Card tetap dengan ukuran aslinya */
+/* Ukuran card disesuaikan untuk mobile */
 .card {
-  width: 12rem;
+  width: 10rem; /* Ukuran lebih kecil agar muat dalam 2 kolom */
   background-color: white;
   border-radius: 10px;
   overflow: hidden;
@@ -153,7 +153,7 @@
 /* Image container */
 .img-container {
   width: 100%;
-  height: 150px;
+  height: 120px; /* Lebih kecil untuk proporsi mobile */
   overflow: hidden;
   border-radius: 10px 10px 0 0;
 }
@@ -166,12 +166,17 @@
 
 /* Text container */
 .text-container {
-  padding: 10px;
+  padding: 8px;
 }
 
 .text-smaller {
-  font-size: 14px;
+  font-size: 11px; /* Ukuran font lebih kecil untuk mobile */
   color: #555;
+}
+
+/* Checkbox styling */
+.form-check {
+  margin-top: 5px;
 }
 
 .btn-outline-primary.active {
