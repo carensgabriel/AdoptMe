@@ -79,7 +79,7 @@
             type: "GET",
             dataType: "json",
             success: function (animal) {
-                console.log(81, formatDate(animal.datebirth.date), calculateAge(animal.datebirth.date))
+                console.log(81, animal.datebirth)
                 let statusIcons = {
                     true: '<i class="fas fa-check-circle text-success"></i>',
                     false: '<i class="fas fa-times-circle text-danger"></i>' 
