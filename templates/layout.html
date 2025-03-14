@@ -76,7 +76,8 @@
       border-top: 1px solid #ddd;
       box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
       padding: 10px 0;
-      width: 500px;
+      max-width: 500px;
+      width: 100%;
       left: 50%;
       transform: translateX(-50%);
       border-radius: 10px 10px 0 0;
@@ -103,6 +104,12 @@
 
     .navbar-nav .nav-link.active {
       color: #ffa500;
+    }
+
+    @media (max-width: 500px) {
+        .navbar.fixed-bottom {
+            max-width: 100%;
+        }
     }
 
     /* WHY CHOOSE */
