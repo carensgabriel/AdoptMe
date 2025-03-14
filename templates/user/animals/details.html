@@ -47,13 +47,17 @@
 
 <script>
     
+    // Fungsi untuk memformat tanggal dari "YYYY-MM-DD" ke "DD Month YYYY"
     function formatDate(datebirth) {
+        if (!datebirth) return "-";
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const date = new Date(datebirth);
-        return date.toUTCString();
+        return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
     }
 
+    // Fungsi untuk menghitung umur dari tanggal lahir
     function calculateAge(datebirth) {
-        if (!datebirth) return "";
+        if (!datebirth) return "-";
 
         const birthDate = new Date(datebirth);
         const today = new Date();
@@ -66,7 +70,6 @@
 
         return years > 0 ? `(${years} Tahun, ${monthsDiff} Bulan)` : `(${monthsDiff} Bulan)`;
     }
-
 
     $(document).ready(function() {
         const animalId = "{{ animal_id }}";  // Ambil ID dari Python
@@ -103,7 +106,7 @@
                 $("#animal-desc").text(animal.desc || "Deskripsi tidak tersedia");
                 $("#animal-sex").text(animal.sex || "Tidak diketahui");
                 $("#animal-breed").text(animal.breed || "Tidak diketahui");
-                $("#animal-datebirth").text(`${formatDate(animal.datebirth)} ${calculateAge(animal.datebirth)}` || "Tanggal lahir tidak tersedia");
+                $("#animal-datebirth").text(`${formatDate(animal.datebirth)} ${calculateAge(animal.datebirth)}`);
 
                 if (animal.address) {
                     $("#animal-address").text(
