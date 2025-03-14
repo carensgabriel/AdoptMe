@@ -10,7 +10,7 @@
   /* CAROUSEL */
   #carousel .carousel-inner .carousel-item img {
     width: 100%;
-    height: 350px;
+    height: 300px;
     object-fit: cover;
   }
 
@@ -19,7 +19,6 @@
     max-width: 500px;
     margin: 0 auto; /* Agar tetap di tengah */
   }
-
   .text-smaller {
     font-size: 0.85rem; /* Ukuran teks lebih kecil */
   }
@@ -55,7 +54,7 @@
     <h2 class="text-center">Animals for Adopt</h2>
 
     <!-- Container untuk Menampilkan Hewan -->
-    <div id="animalsList" class="animal-show d-flex flex-wrap justify-content-center"></div>
+    <div id="animalsList" class="animal-show"></div>
 </div>
 
 <!-- * Article * -->
@@ -162,20 +161,20 @@
                       let city = animal.address?.city || "Tidak tersedia";
 
                       let card = `
-                          <a href="/details/${animal._id}" class="card m-2 col-lg-2 text-decoration-none" style="width: 12rem;">
-                              <div class="card-body d-flex flex-column align-items-center">
-                                  <div class="img-container">
-                                      <img src="/static/uploads/${animal.image}" class="card-img-top border-1" alt="Gambar ${animal.name}">
-                                  </div>
-                                  <div class="text-container mt-2">
-                                      <h5 class="card-title">${animal.name}</h5>
-                                      <p class="mb-1">${sexIcon} ${animal.sex}</p>
-                                      <hr>
-                                      <p class="mb-1 text-smaller">${contactName}</p>
-                                      <p class="mb-1 text-smaller"><i class="fas fa-map-marker-alt text-secondary me-1"></i>${city}</p>
-                                  </div>
-                              </div>
-                          </a>`;
+                        <a href="/details/${animal._id}" class="card text-decoration-none">
+                            <div class="card-body d-flex flex-column align-items-center">
+                                <div class="img-container">
+                                    <img src="/static/uploads/${animal.image}" class="card-img-top border-1" alt="Gambar ${animal.name}">
+                                </div>
+                                <div class="text-container mt-2">
+                                    <h5 class="card-title">${animal.name}</h5>
+                                    <p class="mb-1">${sexIcon} ${animal.sex}</p>
+                                    <hr>
+                                    <p class="mb-1 text-smaller">${contactName}</p>
+                                    <p class="mb-1 text-smaller"><i class="fas fa-map-marker-alt text-secondary me-1"></i>${city}</p>
+                                </div>
+                            </div>
+                        </a>`;
                       animalsList.append(card);
                   });
               },

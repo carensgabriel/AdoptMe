@@ -29,89 +29,6 @@
       background-color: #c6c6c6;
     }
 
-    /* MOBILE VIEW */
-    .main-container {
-      max-width: 500px;
-      margin: 0 auto;
-      background-color: #ffffff;
-    }
-
-    /* HEADER */
-    .header-container {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 10px;
-      background-color: white;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    .logo img {
-      height: 70px;
-      width: 70px;
-    }
-
-    .header-text {
-      margin-left: 10px;
-    }
-
-    .header-text h1 {
-      font-size: 18px;
-      margin: 0;
-      color: #ff6600;
-    }
-
-    .header-text p {
-      font-size: 12px;
-      margin: 0;
-      color: #555;
-    }
-
-    /* NAVBAR */
-    .navbar.fixed-bottom {
-      background-color: white;
-      border-top: 1px solid #ddd;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-      padding: 10px 0;
-      max-width: 500px;
-      width: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      border-radius: 10px 10px 0 0;
-    }
-
-    .navbar-nav .nav-item {
-      text-align: center;
-      flex-grow: 1;
-    }
-
-    .navbar-nav .nav-link {
-      color: #333;
-      font-size: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .navbar-nav .nav-link i {
-      font-size: 18px;
-      margin-bottom: 5px;
-    }
-
-    .navbar-nav .nav-link.active {
-      color: #ffa500;
-    }
-
-    @media (max-width: 500px) {
-        .navbar.fixed-bottom {
-            max-width: 100%;
-        }
-    }
-
     /* WHY CHOOSE */
     .why-choose {
       background-color: #f25c30;
@@ -137,45 +54,6 @@
     .icon-box p {
       font-size: 14px;
     }
-
-    /* LOADING SCREEN */
-    #loading-screen {
-        position: fixed;
-        /* left: 390px; */
-        width: 500px;
-        height: 100%;
-        background: rgba(108, 108, 108, 0.455);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    .loading-container {
-        max-width: 500px;
-        background-color: #ffffff;
-        padding: 30px;
-        text-align: center;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .spinner {
-        width: 40px;
-        height: 40px;
-        border: 6px solid #ddd;
-        border-top: 6px solid #007bff;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-
     
   </style>
 <body>
