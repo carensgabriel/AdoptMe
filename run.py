@@ -7,7 +7,9 @@ from database import mongo
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "supersecretkey"
-app.config["MONGO_URI"] = "mongodb://localhost:27017/adopsi"
+
+# Ambil MONGO_URI dari environment variable atau default ke localhost
+app.config["MONGO_URI"] = "mongodb+srv://carens:9GSwmL3RTPekTJQR@AdoptMe.vngse.mongodb.net/adopsi"
 
 mongo.init_app(app)
 
