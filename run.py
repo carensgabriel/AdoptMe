@@ -1,14 +1,13 @@
 from flask import Flask, render_template
+from flask_pymongo import PyMongo
 from routes.auth_routes import auth_bp
 from routes.user_routes import user_bp
 from routes.admin_routes import admin_bp
 from routes.animal_routes import animal_bp
-from database import mongo
 
 app = Flask(__name__)
+mongo = PyMongo()
 app.config["SECRET_KEY"] = "supersecretkey"
-
-# Ambil MONGO_URI dari environment variable atau default ke localhost
 app.config["MONGO_URI"] = "mongodb+srv://carens:9GSwmL3RTPekTJQR@AdoptMe.vngse.mongodb.net/adopsi"
 
 mongo.init_app(app)
