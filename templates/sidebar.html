@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='img/Logov2_bg.png') }}" type="image/x-icon"/>
+
+    <!-- CSS -->
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/> -->
+
+    <!-- Load Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            display: flex;
+        }
+
+        #sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background-color: #343a40;
+            color: white;
+            padding-top: 20px;
+            position: fixed;
+        }
+
+        #sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+        }
+
+        #sidebar a:hover {
+            background-color: #495057;
+        }
+
+        #content {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        #sidebar {
+            width: 250px; /* Sesuaikan lebar sidebar */
+            background: #343a40;
+            color: white;
+            padding: 20px;
+        }
+
+        #sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #sidebar a:hover {
+            background: #495057;
+        }
+
+        #sidebar i {
+            font-size: 18px;
+            width: 25px;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Admin -->
+    <div id="sidebar">
+        <h4 class="text-center">Admin Dashboard</h4>
+        <hr>
+        <a href="/dashboard"><i class="fas fa-home"></i> <span>Dashboard</span></a>
+        <a href="#"><i class="fas fa-clipboard-list"></i> <span>Data Adopsi</span></a>
+        <a href="#"><i class="fas fa-user"></i> <span>Data Pengguna</span></a>
+        <a href="#"><i class="fas fa-cog"></i> <span>Pengaturan</span></a>
+        <a class="nav-link {% if request.path == url_for('auth.logout') %}active{% endif %}" href="{{ url_for('auth.logout') }}">
+            <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </a>
+    </div>
+
+    <!-- Konten Dashboard -->
+    <div id="content">
+      {% block content %}{% endblock %}        
+    </div>
+
+</body>
+</html>

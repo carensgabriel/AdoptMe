@@ -1,11 +1,117 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <h1>Dashboard</h1>
-</body>
-</html>
+{% extends "sidebar.html" %}
+{% block content %}
+
+<h2>Selamat Datang, {{ auth.username }}</h2>
+<p>Ringkasan data adopsi hewan.</p>
+
+<!-- Kartu Ringkasan -->
+<div class="row">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5>Total Pengajuan Adopsi</h5>
+                <h2 id="totalAdopsi">0</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5>Adopsi Pending</h5>
+                <h2 id="pendingAdopsi">0</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5>Adopsi Disetujui</h5>
+                <h2 id="approvedAdopsi">0</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabel Data Adopsi -->
+<h3 class="mt-5">Daftar Pengajuan Adopsi</h3>
+<table class="table table-bordered mt-3">
+    <thead class="table-dark">
+        <tr>
+            <th>Nama Adopter</th>
+            <th>Nama Hewan</th>
+            <th>Status</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody id="adoptionTable">
+        {% for adoption in adoptions %}
+        <tr>
+            <td>{{ adoption['adopter']['name'] }}</td>
+            <td>{{ adoption['animal']['name'] }}</td>
+            <td>{{ adoption['status'] }}</td>
+            <td>
+                <a href="{{ url_for('admin.adoption_detail', adoption_id=adoption['_id']) }}" class="btn btn-sm btn-primary">Detail</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    getDataAdopsi();
+});
+
+function getDataAdopsi() {
+    $.ajax({
+        url: "/adoptions", // Panggil API Flask untuk mendapatkan data adopsi
+        type: "GET",
+        success: function(response) {
+            if (response.success) {
+                showDataAdopsi(response.data);
+            } else {
+                alert("Gagal mengambil data: " + response.message);
+            }
+        },
+        error: function(xhr) {
+            alert("Terjadi kesalahan saat mengambil data.");
+        }
+    });
+}
+
+function showDataAdopsi(adoptions) {
+    let totalAdopsi = adoptions.length;
+    let pendingAdopsi = adoptions.filter(a => a.status === "Pending").length;
+    let approvedAdopsi = adoptions.filter(a => a.status === "Approved").length;
+
+    // Update data di dashboard
+    $("#totalAdopsi").text(totalAdopsi);
+    $("#pendingAdopsi").text(pendingAdopsi);
+    $("#approvedAdopsi").text(approvedAdopsi);
+
+    // Tampilkan data di tabel
+    let tableBody = $("#adoptionTable");
+    tableBody.empty();
+
+    adoptions.forEach(adoption => {
+        let adoptionId = adoption._id;
+        if (adoptionId) {
+            let row = `<tr>
+                <td>${adoption.adopter.name}</td>
+                <td>${adoption.animal.name}</td>
+                <td>${adoption.status}</td>
+                <td>
+                    <a href="/adoption/${adoptionId}" class="btn btn-sm btn-primary">Detail</a>
+                </td>
+            </tr>`;
+            tableBody.append(row);
+        } else {
+            console.error("ID Adopsi tidak ditemukan atau invalid.");
+        }
+    });
+}
+
+</script>
+
+{% endblock %}

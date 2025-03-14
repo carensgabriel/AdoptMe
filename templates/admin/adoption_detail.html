@@ -1,0 +1,98 @@
+{% extends "sidebar.html" %}
+
+{% block content %}
+<h2>Detail Adopsi</h2>
+<hr>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Data Calon Adopter</h4>
+        <ul>
+            <li><strong>Nama:</strong> {{ adoption.adopter.name }}</li>
+            <li><strong>Umur:</strong> {{ adoption.adopter.age }}</li>
+            <li><strong>Telepon:</strong> {{ adoption.adopter.phone }}</li>
+            <li><strong>Email:</strong> {{ adoption.adopter.email }}</li>
+            <li><strong>Pekerjaan:</strong> {{ adoption.adopter.job }}</li>
+            <li><strong>Tempat Tinggal:</strong> {{ adoption.adopter.residence }}</li>
+        </ul>
+    </div>
+    
+    <div class="col-md-6">
+        <h4>Data Hewan</h4>
+        <ul>
+            <li><strong>Nama Hewan:</strong> {{ adoption.animal.name }}</li>
+            <li><strong>Spesies:</strong> {{ adoption.animal.species }}</li>
+            <li><strong>Jenis Kelamin:</strong> {{ adoption.animal.gender }}</li>
+        </ul>
+    </div>
+</div>
+
+<hr>
+
+<h4>Status: <span id="adoptionStatus">{{ adoption.status }}</span></h4>
+<p><strong>Waktu Pengajuan:</strong> {{ adoption.submitted_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+
+<button id="updateStatusBtn" class="btn btn-primary">Ubah Status</button>
+
+<!-- Modal -->
+<div class="modal" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="statusModalLabel">Pilih Status Adopsi</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <select id="newStatus" class="form-control">
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-primary" id="saveStatusBtn">Simpan Status</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#updateStatusBtn").click(function() {
+            $('#statusModal').modal('show');
+        });
+
+      
+        $("#saveStatusBtn").click(function() {
+            $.ajax({
+                url: "/adoption/update_status",
+                type: "POST",
+                data: {
+                    adoption_id: "{{ adoption._id }}",
+                    status: $("#newStatus").val()
+                },
+                success: function(response) {
+                    if (response.success) {
+
+                        $("#adoptionStatus").text($("#newStatus").val());
+                        alert("Status berhasil diubah!");
+                        $('#statusModal').modal('hide');
+                    } else {
+                        alert("Gagal mengubah status: " + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert("Terjadi kesalahan saat mengubah status.");
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

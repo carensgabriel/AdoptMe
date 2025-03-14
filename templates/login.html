@@ -60,11 +60,7 @@
 
             function showAlert(message, type) {
               let alertContainer = $("#alert-container");
-              alertContainer.removeClass("d-none alert-success alert-danger")
-                            .addClass(`alert alert-${type}`)
-                            .html(message);
-
-              // Sembunyikan alert otomatis setelah 3 detik
+              alertContainer.removeClass("d-none alert-success alert-danger").addClass(`alert alert-${type}`).html(message);
               setTimeout(() => {
                 alertContainer.addClass("d-none");
               }, 5000);
