@@ -47,14 +47,11 @@
 
 <script>
     
-    // Fungsi untuk memformat tanggal dari "YYYY-MM-DD" ke "DD Month YYYY"
     function formatDate(datebirth) {
-        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const date = new Date(datebirth);
-        return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+        return date.toUTCString();
     }
 
-    // Fungsi untuk menghitung umur dari tanggal lahir
     function calculateAge(datebirth) {
         if (!datebirth) return "";
 
@@ -69,6 +66,7 @@
 
         return years > 0 ? `(${years} Tahun, ${monthsDiff} Bulan)` : `(${monthsDiff} Bulan)`;
     }
+
 
     $(document).ready(function() {
         const animalId = "{{ animal_id }}";  // Ambil ID dari Python
