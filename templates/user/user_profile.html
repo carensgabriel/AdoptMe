@@ -1,13 +1,73 @@
 {% extends "layout.html" %}
+
 {% block content %}
+    <h1>User Profile</h1>
 
-<h1>User Profile</h1>
+    <!-- Display User Data -->
+    <div class="profile-info">
+        <p><strong>Username:</strong> <span id="username">Loading...</span></p>
+        <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+        <p><strong>Full Name:</strong> <span id="full_name">Loading...</span></p>
+        <p><strong>Phone:</strong> <span id="phone">Loading...</span></p>
+        <p><strong>Address:</strong> <span id="address">Loading...</span></p>
+    </div>
 
-<a class="nav-link {% if request.path == url_for('auth.logout') %}active{% endif %}" href="{{ url_for('auth.logout') }}">
-  <button type="submit" class="btn btn-primary mt-4 w-100"> Logout <i class="fa-solid fa-arrow-right"></i></button>
-</a>
+    <!-- Button Logout -->
+    <a href="{{ url_for('auth.logout') }}">
+        <button type="submit" class="btn btn-primary mt-4 w-100">
+            Logout <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </a>
 
+    <!-- AJAX Script to Fetch User Data -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Function to get the user profile data
+        function getUserProfile() {
+            // Get token from localStorage
+            var jwt_token = localStorage.getItem("jwt_token");
 
+            // Check if token exists
+            if (!jwt_token) {
+                alert("JWT token not found. Please log in again.");
+                return;
+            }
 
+            $.ajax({
+                url: "/profile",  // Endpoint to fetch user data
+                type: "GET",
+                headers: {
+                    "Authorization": "Bearer " + jwt_token  // Sending token in the request header
+                },
+                success: function(response) {
+                  console.log(43, response)
+                    // If successful, populate the profile fields
+                    if (response.success) {
+                        $("#username").text(response.data.username);
+                        $("#email").text(response.data.email);
+                        $("#full_name").text(response.data.full_name);
+                        $("#phone").text(response.data.phone);
+                        $("#address").text(response.data.address);
+                    } else {
+                        alert("Failed to fetch user data.");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error: ", error);
+                    alert("An error occurred while fetching user data.");
+                }
+            });
+        }
+
+        // Call the function when page loads
+        $(document).ready(function() {
+            getUserProfile();
+        });
+
+        function logout() {
+            localStorage.removeItem("jwt_token");
+            window.location.href = "/login";  // Redirect ke halaman login setelah logout
+        }
+    </script>
 
 {% endblock %}
