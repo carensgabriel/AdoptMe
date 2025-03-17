@@ -8,9 +8,10 @@ user_bp = Blueprint("user", __name__)
 
 #* ==================== HOME ==================== #
 
+@user_bp.route("/")
 @user_bp.route("/home")
 def home():
-    return render_template("home.html")  # Halaman home untuk user
+    return render_template("home.html")
 
 #* ==================== SUBMIT ADOPTION ==================== #
 

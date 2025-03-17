@@ -24,10 +24,6 @@ app.register_blueprint(user_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(animal_bp)
 
-@app.route("/")
-def index():
-    return render_template("home.html")
-
 if __name__ == "__main__":
     debug_mode = os.getenv("FLASK_DEBUG", "False").lower() == "True"
     app.run(port=3333, debug=debug_mode)
