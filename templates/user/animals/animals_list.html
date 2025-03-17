@@ -46,6 +46,7 @@
 
     $(document).ready(function () {
         function loadAnimals(filters = {}) {
+            jQuery("#loading-screen").show();
             $.ajax({
                 url: "/get_animals",
                 type: "GET",
@@ -53,6 +54,7 @@
                 dataType: "json",
                 headers: { "X-Requested-With": "XMLHttpRequest" },
                 success: function (data) {
+                    jQuery("#loading-screen").hide();
                     let animalsList = $("#animalsList");
                     animalsList.empty(); // Bersihkan daftar sebelum menambahkan data baru
 
@@ -88,6 +90,7 @@
                     });
                 },
                 error: function (e) {
+                    jQuery("#loading-screen").hide();
                     console.error("Error:", e);
                 }
             });

@@ -132,6 +132,7 @@
     }
 
     $(document).ready(function () {
+      jQuery("#loading-screen").show();
       function loadAnimals() {
           $.ajax({
               url: "/get_animals",
@@ -142,6 +143,7 @@
               },
               dataType: "json",
               success: function (data) {
+                  jQuery("#loading-screen").hide();
                   let animalsList = $("#animalsList");
                   animalsList.empty();
 
@@ -177,6 +179,7 @@
                   });
               },
               error: function (e) {
+                  jQuery("#loading-screen").hide();
                   console.error("Error:", e);
               }
           });
