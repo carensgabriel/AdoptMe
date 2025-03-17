@@ -13,42 +13,6 @@ user_bp = Blueprint("user", __name__)
 def home():
     return render_template("home.html")  # Halaman home untuk user
 
-#* ==================== USER PROFILE ==================== #
-
-def get_user_data(user_id):
-    try:
-        # Ambil data pengguna dari database berdasarkan user_id
-        user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
-        if user:
-            # Mengubah ObjectId menjadi string agar bisa diproses
-            user['_id'] = str(user['_id'])
-            return user
-        else:
-            return None  # Jika pengguna tidak ditemukan
-    except Exception as e:
-        print(f"Error fetching user data: {e}")
-        return None
-
-@user_bp.route("/profile")
-@jwt_required()
-def user_profile():
-    try:
-        # Mendapatkan identitas pengguna dari JWT
-        current_user = get_jwt_identity()
-
-        # Ambil data pengguna dari database menggunakan current_user (ID atau email yang ada di JWT)
-        user = get_user_data(current_user)
-
-        # Jika pengguna tidak ditemukan, tampilkan error
-        if user is None:
-            return jsonify(message="User not found"), 404
-
-        # Render halaman profil pengguna dengan data pengguna
-        return render_template("user/user_profile.html", user=user)
-
-    except Exception as e:
-        return jsonify(message=f"An error occurred: {str(e)}"), 500
-
 #* ==================== SUBMIT ADOPTION ==================== #
 
 @user_bp.route("/submit_adoption", methods=["POST"])

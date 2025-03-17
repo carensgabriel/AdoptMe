@@ -8,7 +8,7 @@ from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "supersecretkey"
-app.config["MONGO_URI"] = "mongodb+srv://carens:9GSwmL3RTPekTJQR@AdoptMe.vngse.mongodb.net/adopsi"
+app.config["MONGO_URI"] = "mongodb+srv://carens:uMR6GKMHifGFACmL@AdoptMe.vngse.mongodb.net/adopsi"
 app.config["JWT_SECRET_KEY"] = "supersecretkey"  # Ganti dengan kunci rahasia yang kuat
 app.config["JWT_TOKEN_LOCATION"] = ["headers"]  # Tentukan lokasi JWT (misalnya di header)
 
