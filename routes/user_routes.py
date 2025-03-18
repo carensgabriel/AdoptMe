@@ -18,7 +18,7 @@ def home():
 def user_profile():
     return render_template("user/user_profile.html")
 
-@user_bp.route("/#")
+@user_bp.route("/404")
 def under_development():
     return render_template("404.html")
 
