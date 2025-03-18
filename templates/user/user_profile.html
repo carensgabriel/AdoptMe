@@ -1,15 +1,13 @@
 {% extends "layout.html" %}
-
 {% block content %}
+    
+<div class="container mt-4">
     <h1>User Profile</h1>
 
     <!-- Display User Data -->
     <div class="profile-info">
-        <p><strong>Username:</strong> <span id="username">Loading...</span></p>
-        <p><strong>Email:</strong> <span id="email">Loading...</span></p>
-        <p><strong>Full Name:</strong> <span id="full_name">Loading...</span></p>
-        <p><strong>Phone:</strong> <span id="phone">Loading...</span></p>
-        <p><strong>Address:</strong> <span id="address">Loading...</span></p>
+        <p><strong>Username:</strong> <span id="username">User</span></p>
+        <p><strong>Email:</strong> <span id="email">user@gmail.com</span></p>
     </div>
 
     <!-- Button Logout -->
@@ -18,5 +16,6 @@
             Logout <i class="fa-solid fa-arrow-right"></i>
         </button>
     </a>
+</div>
 
 {% endblock %}

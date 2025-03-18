@@ -1,17 +1,31 @@
-from datetime import datetime
-from bson import ObjectId
 from flask import Blueprint, render_template, jsonify, request
+from bson import ObjectId
 from database import mongo
 from middleware import login_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from datetime import datetime
 
 user_bp = Blueprint("user", __name__)
 
+def get_user_data(user_id):
+    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+    if user:
+        user["_id"] = str(user["_id"])
+        return user
+    return None
+
 #* ==================== HOME ==================== #
 
-@user_bp.route("/")
 @user_bp.route("/home")
 def home():
     return render_template("home.html")
+
+#* ==================== PROFILE ==================== #
+
+@user_bp.route("/profile")
+def user_profile():
+    return render_template("user/user_profile.html")
+
 
 #* ==================== SUBMIT ADOPTION ==================== #
 

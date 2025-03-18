@@ -68,8 +68,8 @@
                           ? '<i class="fas fa-mars text-primary"></i>'  // Ikon jantan
                           : '<i class="fas fa-venus text-danger"></i>'; // Ikon betina
 
-                        let contactName = animal.contact?.name || "Tidak tersedia"; // Pastikan tidak error jika contact kosong
-                        let city = animal.address?.city || "Tidak tersedia"; // Pastikan tidak error jika address kosong
+                        let contactName = animal.contact?.name || "Tidak tersedia";
+                        let city = animal.address?.city || "Tidak tersedia";
 
                         let card = `
                             <a href="/details/${animal._id}" class="card text-decoration-none">

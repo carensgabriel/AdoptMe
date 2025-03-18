@@ -1,4 +1,6 @@
+from datetime import timedelta
 from flask import Blueprint, redirect, render_template, jsonify, url_for, request, session
+from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash, generate_password_hash
 from database import mongo
 
@@ -9,34 +11,24 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")  # Pastikan file ini ada
+        return render_template("login.html")
 
-    # Cek apakah request memiliki Content-Type JSON
     if request.content_type != "application/json":
         return jsonify({"success": False, "message": "Content-Type harus application/json"}), 415
 
-    # Ambil data dari request JSON
     data = request.get_json()
     username = data.get("username")
     password = data.get("password")
 
-    # Cari user di database
     user = mongo.db.users.find_one({"username": username})
 
-    # Jika user tidak ditemukan
-    if not user:
-        return jsonify({"success": False, "message": "User tidak ditemukan!"}), 401
-
-    # Cek password hash
-    if "password" not in user or not check_password_hash(user["password"], password):
+    if not user or not check_password_hash(user["password"], password):
         return jsonify({"success": False, "message": "Username atau password salah."}), 401
 
-    # Simpan user ke dalam session
     session["user_id"] = str(user["_id"])
     session["role"] = user["role"]
-    session.modified = True  # Pastikan session diperbarui
+    session.modified = True 
 
-    # Cek role dan arahkan ke halaman yang sesuai
     redirect_url = url_for("admin.dashboard") if user["role"] == "admin" else url_for("user.home")
     
     return jsonify({"success": True, "redirect": redirect_url})
