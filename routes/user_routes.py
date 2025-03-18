@@ -18,6 +18,9 @@ def home():
 def user_profile():
     return render_template("user/user_profile.html")
 
+@user_bp.route("/#")
+def under_development():
+    return render_template("404.html")
 
 #* ==================== SUBMIT ADOPTION ==================== #
 

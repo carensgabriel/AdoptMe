@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container text-center mt-5">
+    <h4>🚧 This Page is Under Development 🚧</h2>
+    <p class="lead">We are working to bring this page soon.</p>
+    <br>
+    <a href="{{ url_for('index') }}" class="btn btn-primary mt-4 w-50">Back to Home</a>
+
+    <!-- Button Logout -->
+    <a href="{{ url_for('auth.logout') }}">
+        <button type="submit" class="btn btn-outline-primary mt-2 w-50">
+            Logout <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </a>
+</div>
+
+{% endblock %}

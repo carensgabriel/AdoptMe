@@ -128,7 +128,7 @@
           </li>
           {% else %}
           <li class="nav-item">
-            <a class="nav-link {% if request.path == url_for('user.user_profile') %}active{% endif %}" href="{{ url_for('user.user_profile') }}">
+            <a class="nav-link {% if request.path == url_for('user.under_development') %}active{% endif %}" href="{{ url_for('user.under_development') }}">
               <i class="fas fa-user-alt"></i>
               <p>Akun</p>
             </a>
