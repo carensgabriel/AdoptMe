@@ -2,17 +2,9 @@ from flask import Blueprint, render_template, jsonify, request
 from bson import ObjectId
 from database import mongo
 from middleware import login_required
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 
 user_bp = Blueprint("user", __name__)
-
-def get_user_data(user_id):
-    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
-    if user:
-        user["_id"] = str(user["_id"])
-        return user
-    return None
 
 #* ==================== HOME ==================== #
 
@@ -30,6 +22,7 @@ def user_profile():
 #* ==================== SUBMIT ADOPTION ==================== #
 
 @user_bp.route("/submit_adoption", methods=["POST"])
+@login_required
 def submit_adoption():
     try:
         data = request.get_json()

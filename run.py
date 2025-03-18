@@ -5,7 +5,6 @@ from routes.admin_routes import admin_bp
 from routes.animal_routes import animal_bp
 from database import mongo
 from dotenv import load_dotenv
-from flask_jwt_extended import JWTManager
 import os
 
 load_dotenv()
