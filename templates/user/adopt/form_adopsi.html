@@ -152,6 +152,12 @@
     let emptyFields = [];
 
     console.log("Form Object:", formObject); // Debugging
+
+    // Cek apakah ada field kosong
+    if (emptyFields.length) {
+        showAlertMessage('Semua field wajib diisi!');
+        return;
+    }
     
     let fileInput = document.getElementById("uploadKTP");
     let file = fileInput.files[0];
@@ -178,12 +184,6 @@
         }
 
         if (!value.trim()) emptyFields.push(key);
-    }
-
-    // Cek apakah ada field kosong
-    if (emptyFields.length) {
-        showAlertMessage('Semua field wajib diisi!');
-        return;
     }
 
     // 🔹 **Validasi Nomor Telepon (Hanya Angka)**
