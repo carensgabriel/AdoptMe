@@ -1,59 +1,88 @@
 {% extends "layout.html" %}
 {% block content %}
 
-    <div class="container d-flex justify-content-center align-items-center mt-5">
-      <div class="p-5 shadow-sm" style="max-width: 400px; width: 100%; transform: none; transition: none;">
-        <h3 class="text-center mb-4"> AdoptMe! | Register </h3>
-        <div id="alert-container" class="alert d-none" role="alert"></div>
+<div class="container d-flex justify-content-center align-items-center mt-5">
+  <div class="p-5 shadow-sm" style="max-width: 400px; width: 100%; transform: none; transition: none;">
+    <h3 class="text-center mb-4"> AdoptMe! | Register </h3>
+    <div id="alert-container" class="alert d-none" role="alert"></div>
 
-          <form method="POST">
-            <div class="form-floating mb-3 w-100">
-              <input type="text" class="form-control" name="username" id="username" autocomplete="off" placeholder="Username" required>
-              <label for="username"> Username </label>
-            </div>
-            <div class="form-floating w-100">
-              <input type="password" class="form-control" name="password" id="password" autocomplete="off" placeholder="Password" required>
-              <label for="password"> Password </label>
-            </div>
-            <button type="submit" class="btn btn-primary mt-4 w-100"> Register </button>
-          </form>
+    <form method="POST">
 
-        <p class="text-center mt-3"> 
-          Already have an account? <a href="/login">Login here </a>
-        </p>
+      <div class="form-floating mb-3 w-100">
+        <input type="text" class="form-control" name="username" id="username" autocomplete="off" placeholder="Username" required>
+        <label for="username"> Username </label>
       </div>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        $("form").submit(function (e) {
-          e.preventDefault();
+      <div class="form-floating mb-3 w-100">
+        <input type="email" class="form-control" name="email" id="email" autocomplete="off" placeholder="Email" required>
+        <label for="email"> Email </label>
+      </div>
 
-          $.ajax({
-            url: "/register",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({ 
-              username: $("#username").val(), 
-              password: $("#password").val() 
-            }),
-            success: function (response) {
-              showAlert(response.message, "success");
-              setTimeout(() => { window.location.href = "/login"; }, 2000);
-            },
-            error: function (xhr) {
-              let response = JSON.parse(xhr.responseText);
-              showAlert(response.message, "danger");
-            }
-          });
-        });
+      <div class="form-floating w-100 position-relative">
+        <input type="password" class="form-control" name="password" id="password" autocomplete="off" placeholder="Password" required>
+        <label for="password"> Password </label>
+        <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2" id="togglePassword">
+          <i class="fa-solid fa-eye-slash"></i>
+        </button>
+      </div>
 
-        function showAlert(message, type) {
-          $("#alert-container").removeClass("d-none alert-success alert-danger").addClass(`alert alert-${type}`).html(message);
+      <button type="submit" class="btn btn-primary mt-4 w-100"> Register </button>
+
+    </form>
+
+    <p class="text-center mt-3"> 
+      Already have an account? <a href="/login">Login here </a>
+    </p>
+
+  </div>
+</div>
+
+<script>
+
+  $(document).ready(function () {
+    
+    $("#togglePassword").click(function () {
+      let passwordField = $("#password");
+      let icon = $(this).find("i");
+
+      if (passwordField.attr("type") === "password") {
+        passwordField.attr("type", "text");
+        icon.removeClass("fa-eye-slash").addClass("fa-eye");
+      } else {
+        passwordField.attr("type", "password");
+        icon.removeClass("fa-eye").addClass("fa-eye-slash");
+      }
+    });
+
+    $("form").submit(function (e) {
+      e.preventDefault();
+
+      let username = $("#username").val().trim();
+      let email = $("#email").val().trim();
+      let password = $("#password").val().trim();
+
+      if (!username || !email || !password) {
+        showAlertMessage("Semua field wajib diisi!", "danger");
+        return;
+      }
+
+      $.ajax({
+        url: "/register",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ username: username, email: email, password: password }),
+        success: function (response) {
+          showAlert(response.message, "success");
+          setTimeout(() => { window.location.href = "/login"; }, 2000);
+        },
+        error: function (xhr) {
+          let response = xhr.responseJSON;
+          showAlert(response ? response.message : "Registrasi gagal!", "danger");
         }
       });
-    </script>
+    });
+  });
 
+</script>
 
 {% endblock %}

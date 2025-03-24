@@ -1,71 +1,79 @@
 {% extends "layout.html" %}
 {% block content %}
 
-          <div class="container d-flex justify-content-center align-items-center mt-5">
-            <div class="p-5 shadow-sm" style="max-width: 400px; width: 100%; transform: none; transition: none;">
-              <h3 class="text-center mb-4"> AdoptMe! | Login </h3>
-              <div id="alert-container" class="alert d-none" role="alert"></div>
+<div class="container d-flex justify-content-center align-items-center mt-5">
+  <div class="p-5 shadow-sm" style="max-width: 400px; width: 100%; transform: none; transition: none;">
+    <h3 class="text-center mb-4"> AdoptMe! | Login </h3>
+    <div id="alert-container" class="alert d-none" role="alert"></div>
 
-                <form method="POST" class="d-flex flex-column align-items-center">
-                  <div class="form-floating mb-3 w-100">
-                    <input type="text" class="form-control" name="username" id="username" autocomplete="off" placeholder="Username" required>
-                    <label for="username"> Username </label>
-                  </div>
-                  <div class="form-floating w-100">
-                    <input type="password" class="form-control" name="password" id="password" autocomplete="off" placeholder="Password" required>
-                    <label for="password"> Password </label>
-                  </div>
-                  <button type="submit" class="btn btn-primary mt-4 w-100"> Login <i class="fa-solid fa-arrow-right"></i></button>
-                </form>
+      <form method="POST" class="d-flex flex-column align-items-center">
+        <div class="form-floating mb-3 w-100">
+          <input type="text" class="form-control" name="identifier" id="identifier" autocomplete="off" placeholder="Username atau Email" required>
+          <label for="identifier"> Username atau Email </label>
+        </div>
+        <div class="form-floating w-100 position-relative">
+          <input type="password" class="form-control" name="password" id="password" autocomplete="off" placeholder="Password" required>
+          <label for="password"> Password </label>
+          <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2" id="togglePassword">
+            <i class="fa-solid fa-eye-slash"></i>
+          </button>
+        </div>
+        <button type="submit" class="btn btn-primary mt-4 w-100"> Login <i class="fa-solid fa-arrow-right"></i></button>
+      </form>
 
-              <p class="text-center mt-3">
-                Don't have an account? <a href="/register"> Register here </a>
-              </p>
-            </div>
-          </div>
+    <p class="text-center mt-3">
+      Don't have an account? <a href="/register"> Register here </a>
+    </p>
+  </div>
+</div>
 
+<script>
+    $(document).ready(function () {
+      $("#togglePassword").click(function () {
+        let passwordField = $("#password");
+        let icon = $(this).find("i");
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-            $(document).ready(function () {
-            $("form").submit(function (e) {
-              e.preventDefault(); // Mencegah submit default
+        if (passwordField.attr("type") === "password") {
+          passwordField.attr("type", "text");
+          icon.removeClass("fa-eye-slash").addClass("fa-eye");
+        } else {
+          passwordField.attr("type", "password");
+          icon.removeClass("fa-eye").addClass("fa-eye-slash");
+        }
+      });
 
-              $.ajax({
-                url: "/login",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({ 
-                  username: $("#username").val(), 
-                  password: $("#password").val()
-                }),
-                success: function (response) {
-                  if (response.success) {
-                    showAlert("Login berhasil! Mengalihkan halaman...", "success");
+      // Handle form submission
+      $("form").submit(function (e) {
+        e.preventDefault();
 
-                    setTimeout(function () {
-                      window.location.href = response.redirect; // Redirect sesuai role
-                    }, 1500);
-                  } else {
-                    showAlert(response.message, "danger");
-                  }
-                },
-                error: function (xhr) {
-                  let response = xhr.responseJSON;
-                  showAlert(response ? response.message : "Terjadi kesalahan saat login.", "danger");
-                },
-              });
-            });
+        let identifier = $("#identifier").val().trim(); // Bisa username atau email
+        let password = $("#password").val().trim();
 
-            function showAlert(message, type) {
-              let alertContainer = $("#alert-container");
-              alertContainer.removeClass("d-none alert-success alert-danger").addClass(`alert alert-${type}`).html(message);
-              setTimeout(() => {
-                alertContainer.addClass("d-none");
-              }, 5000);
-            }
-          });
-          </script>
+        if (!identifier || !password) {
+            showAlertMessage("Masukkan username atau email serta password!", "danger");
+            return;
+        }
+
+        $.ajax({
+          url: "/login",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ identifier: identifier, password: password }),
+          success: function (response) {
+              if (response.success) {
+                  showAlert("Login berhasil! Mengalihkan halaman...", "success");
+                  setTimeout(() => { window.location.href = response.redirect; }, 1500);
+              } else {
+                  showAlertMessage(response.message, "danger");
+              }
+          },
+          error: function (xhr) {
+              let response = xhr.responseJSON;
+              showAlertMessage(response ? response.message : "Login gagal! Periksa kembali username/email dan password.", "danger");
+          }
+        });
+      });
+    });
+  </script>
 
 {% endblock %}

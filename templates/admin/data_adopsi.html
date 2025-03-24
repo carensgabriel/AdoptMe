@@ -1,0 +1,78 @@
+{% extends "sidebar.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Selamat Datang, Admin</h2>
+    <p>Data adopsi hewan.</p>
+    <hr>
+
+    <!-- Tabel Data Adopsi -->
+    <h3>Daftar Pengajuan Adopsi</h3>
+
+    <table class="table table-bordered mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th class="text-center">No</th>
+                <th>Nama Adopter</th>
+                <th>Nama Hewan</th>
+                <th>Status</th>
+                <th class="text-center">Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="adoptionTable">
+
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+$(document).ready(function() {
+    getDataAdopsi();
+});
+
+function getDataAdopsi() {
+    $.ajax({
+        url: "/adoptions",  
+        type: "GET",
+        headers: { "X-Requested-With": "XMLHttpRequest" }, // Tambahkan header agar Python tahu ini AJAX
+        success: function(response) {
+            console.log(40, response);
+            if (response.success) {
+                showDataAdopsi(response.data);
+            } else {
+                showAlertMessage("Gagal mengambil data: " + (response.message || "Terjadi kesalahan."));
+            }
+        },
+        error: function(xhr) {
+            showAlertMessage("Terjadi kesalahan saat mengambil data.");
+        }
+    });
+}
+
+function showDataAdopsi(adoptions) {
+    let tableBody = $("#adoptionTable");
+    tableBody.empty();
+
+    adoptions.forEach((adoption, index) => {
+        let adoptionId = adoption._id;
+        if (adoptionId) {
+            let row = `<tr>
+                <td class="text-center">${index + 1}</td>
+                <td>${adoption.adopter.name}</td>
+                <td>${adoption.animal.name}</td>
+                <td>${adoption.status}</td>
+                <td>
+                    <a href="/adoption/${adoptionId}" class="btn btn-sm btn-primary">Detail</a>
+                </td>
+            </tr>`;
+            tableBody.append(row);
+        } else {
+            console.error("ID Adopsi tidak ditemukan atau invalid.");
+        }
+    });
+}
+</script>
+
+{% endblock %}

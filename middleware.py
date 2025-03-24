@@ -16,3 +16,14 @@ def admin_required(f):
             return redirect(url_for("user.home"))
         return f(*args, **kwargs)
     return decorated_function
+
+def get_current_user():
+    """Fungsi tambahan untuk mendapatkan informasi user yang sedang login."""
+    if "user_id" in session:
+        return {
+            "id": session.get("user_id"),
+            "name": session.get("username"),
+            "email": session.get("email"),
+            "role": session.get("role")
+        }
+    return None

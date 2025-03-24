@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, jsonify, request
+import os
+from flask import Blueprint, json, render_template, jsonify, request, url_for
 from bson import ObjectId
 from database import mongo
-from middleware import login_required
+from middleware import *
 from datetime import datetime
+from werkzeug.utils import secure_filename
 
 user_bp = Blueprint("user", __name__)
 
@@ -17,47 +19,131 @@ def home():
 @user_bp.route("/profile")
 def user_profile():
     return render_template("user/user_profile.html")
+    # return render_template("404.html")
 
-@user_bp.route("/404")
-def under_development():
-    return render_template("404.html")
+#* ==================== SYARAT ADOPSI ==================== #
 
-#* ==================== SUBMIT ADOPTION ==================== #
+@user_bp.route("/syarat_adopsi", methods=["GET", "POST"])
+@login_required
+def syarat_adopsi():
+    try:
+        if request.method == "POST":
+            data = request.get_json()
+
+            if not data or not data.get("setuju"):
+                return jsonify({"success": False, "message": "Anda harus menyetujui syarat adopsi sebelum melanjutkan."}), 400
+
+            return jsonify({"success": True, "redirect": url_for("user.submit_adoption")})
+        
+        return render_template("user/adopt/syarat_adopsi.html")
+
+    except Exception as e:
+        print("error:", e)
+        return jsonify({"success": False, "message": "Terjadi kesalahan server!"}), 500
+
+#* ==================== SUBMIT FORM ADOPSI ==================== #
+
+UPLOAD_FOLDER = "static/uploads/ktp"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "pdf"}
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @user_bp.route("/submit_adoption", methods=["POST"])
 @login_required
 def submit_adoption():
     try:
-        data = request.get_json()
+        user = get_current_user()
+        # Ambil JSON dari form data
+        json_data = request.form.get("data")
+        if not json_data:
+            return jsonify({"success": False, "message": "Data adopsi tidak ditemukan!"}), 400
+        
+        data = json.loads(json_data)
 
-        if not data:
-            return jsonify({"success": False, "message": "Data tidak valid!"}), 400
+        # Ambil file KTP
+        file = request.files.get("uploadKTP")
+        if not file or not allowed_file(file.filename):
+            return jsonify({"success": False, "message": "Harap unggah KTP dengan format JPG, JPEG, PNG, atau PDF."}), 400
+        
+        # Simpan file dengan nama aman
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(file_path)
 
         new_adoption = {
             "adopter": {
-                "name": data["namaAdopter"],
-                "age": data["umurAdopter"],
-                "phone": data["telpAdopter"],
-                "email": data["emailAdopter"],
-                "job": data["pekerjaanAdopter"],
-                "residence": data["tempatTinggal"]
+                "name": data.get("namaAdopter", ""),
+                "datebirth": data.get("tglLahir", ""),
+                "phone": data.get("telpAdopter", ""),
+                "email": data.get("emailAdopter", ""),
+                "address": data.get("alamatAdopter", ""),
+                "occupation": data.get("pekerjaanAdopter", ""),
+                "residence": data.get("tempatTinggalLain", "") if data.get("tempatTinggal") == "Other" else data.get("tempatTinggal", ""),
+                "reason": data.get("alasanAdopsi", ""),
+                "ktp_file": file_path
             },
             "animal": {
-                "name": data["namaHewan"],
-                "species": data["breedHewan"],  # Ganti spesiesHewan dengan breedHewan
-                "gender": data["jenisKelamin"]
+                "name": data.get("namaHewan", ""),
+                "breed": data.get("breedHewan", ""),
+                "gender": data.get("jkHewan", "")
+            },
+            "emergency_contact": {
+                "name": data.get("namaDarurat", ""),
+                "phone": data.get("telpDarurat", "")
             },
             "status": "Pending",
-            "submitted_at": datetime.now()
+            "submitted_at": datetime.now(),
+            "user": {
+                "name": user["name"],
+                "email": user["email"]
+            }
         }
 
         mongo.db.form_adoption.insert_one(new_adoption)
         return jsonify({"success": True, "message": "Formulir berhasil dikirim!"})
 
-    except KeyError as ke:
-        print("DEBUG: KeyError:", str(ke))  # Debugging
-        return jsonify({"success": False, "message": f"Field {str(ke)} tidak ditemukan dalam request!"}), 400
-
     except Exception as e:
-        print("DEBUG: Error:", str(e))  # Debugging
-        return jsonify({"success": False, "message": f"Terjadi kesalahan: {str(e)}"}), 500
+        print(e)
+        return jsonify({"success": False, "message": f"Terjadi kesalahan: {e}"}), 500
+    
+#* ==================== INFORMASI ADOPSI ==================== #
+
+@user_bp.route("/adoption_info", methods=["GET"])
+@login_required
+def adoption_info():
+    try:
+        # Jika permintaan dari AJAX, kirimkan data dalam format JSON
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            user = get_current_user()
+
+            if not user or not user.get("email"):
+                return jsonify({"success": False, "message": "User tidak ditemukan"}), 401
+
+            # Ambil data adopsi berdasarkan email user yang login
+            form_adopsi = list(mongo.db.form_adoption.find({"user.name": user["name"]}))
+
+            list_adoptions = []
+            for adoption in form_adopsi:
+                # Ambil informasi hewan berdasarkan nama hewan
+                animal_info = mongo.db.animals.find_one({"name": adoption["animal"]["name"]}) if "animal" in adoption else None
+
+                list_adoptions.append({
+                    "animal": {
+                        "name": animal_info["name"] if animal_info else "Tidak tersedia",
+                        "image": animal_info["image"] if animal_info and "image" in animal_info else "static/img/default-animal.jpg"
+                    },
+                    "submission_date": adoption["submitted_at"].strftime("%d-%m-%Y") if "submitted_at" in adoption else "Tidak tersedia",
+                    "status": adoption.get("status", "Pending")
+                })
+
+            return jsonify({"success": True, "message": list_adoptions})
+
+        # Jika bukan permintaan AJAX, render template
+        return render_template("user/adopt/adoption_info.html")
+    
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500

@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+.img-adoption {
+    width: 100%;  
+    height: 180px;
+    object-fit: cover; 
+    border-radius: 10px;
+}
+
+.card {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 18px;
+}
+
+.card-text {
+    font-size: 14px;
+}
+
+.badge {
+    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+</style>
+
+<div class="container mt-4">
+    <h2>Informasi Adopsi</h2>
+    <p>Berikut adalah status adopsi hewan yang telah Anda ajukan.</p>
+
+    <div id="adoption-list">
+
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "/adoption_info",
+        type: "GET",
+        success: function(response) {
+            if (response.success && response.message.length > 0) {
+                let adoptionHTML = "";
+                response.message.forEach((adoption) => {
+                    let badgeClass = adoption.status === "Approved" ? "bg-success" :
+                                     adoption.status === "Rejected" ? "bg-danger" : "bg-warning";
+
+                    adoptionHTML += `
+                      <div class="card shadow-sm mb-3">
+                          <div class="row g-0">
+                              <!-- Bagian gambar -->
+                              <div class="col-12 col-sm-4 col-md-3 p-2">
+                                  <img src="/static/uploads/${adoption.animal.image}" class="img-fluid img-adoption" alt="Foto Hewan">
+                              </div>
+                              <!-- Bagian informasi -->
+                              <div class="col-12 col-sm-8 col-md-9">
+                                  <div class="card-body">
+                                      <h5 class="card-title"><strong>${adoption.animal.name}</strong></h5>
+                                      <hr>
+                                      <p class="card-text">
+                                          <strong>Tanggal Pengajuan:</strong><br>
+                                          ${adoption.submission_date}
+                                          <br>
+                                          <strong>Status:</strong><br>
+                                          <span class="badge ${badgeClass}">${adoption.status}</span>
+                                      </p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                    `;
+                });
+                $("#adoption-list").html(adoptionHTML);
+            } else {
+                $("#adoption-list").html('<p class="text-center">Belum ada pengajuan adopsi.</p>');
+            }
+        },
+        error: function() {
+            $("#adoption-list").html('<p class="text-danger text-center">Gagal mengambil data adopsi.</p>');
+        }
+    });
+});
+</script>
+
+{% endblock %}

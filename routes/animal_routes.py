@@ -2,8 +2,7 @@ from flask import Blueprint, redirect, render_template, jsonify, url_for, reques
 from bson.objectid import ObjectId
 from database import mongo
 from datetime import datetime
-
-from middleware import login_required
+from middleware import *
 
 animal_bp = Blueprint("animal", __name__)
 
@@ -99,7 +98,6 @@ def animal_details(animal_id):
 @login_required
 def form_adopsi(animal_id):
     try:
-        
         animal = mongo.db.animals.find_one({"_id": ObjectId(animal_id)})
         if not animal:
             return "Hewan tidak ditemukan", 404

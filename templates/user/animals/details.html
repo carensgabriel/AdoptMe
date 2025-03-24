@@ -100,7 +100,7 @@
                 let datebirth = new Date(animal.datebirth.$date);
 
                 $("#adoption-status").text(adoptionStatusText).addClass(adoptionStatusClass);                
-                $("#animal-image").attr("src", "/static/uploads/" + (animal.image || "default.jpg"));
+                $("#animal-image").attr("src", "/static/uploads/animals/" + (animal.image || "default.jpg"));
                 $("#animal-name").text(animal.name || "Nama tidak tersedia");
                 $("#animal-city").text(animal.address?.city || "Lokasi tidak tersedia");
                 $("#animal-desc").text(animal.desc || "Deskripsi tidak tersedia");

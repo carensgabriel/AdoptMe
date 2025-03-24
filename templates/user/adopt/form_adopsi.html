@@ -11,26 +11,25 @@
 
 <div class="container mt-4">
   <h2 class="text-center mb-4">Formulir Adopsi</h2>
-  
+
   <form id="adoption-form" class="p-5 m-3 shadow-sm border rounded bg-light">
     
-    <!-- * DATA CALON ADOPTER * -->
+    <!-- * Data Calon Adopter * -->
     <h4 class="mb-3">Data Diri Calon Adopter</h4>
+
     <div class="form-floating mb-3">
       <input type="text" class="form-control" id="namaAdopter" name="namaAdopter" placeholder="Nama Lengkap" autocomplete="off" required>
       <label for="namaAdopter">Nama Lengkap</label>
     </div>
 
     <div class="form-floating mb-3">
-      <input type="date" class="form-control" id="umurAdopter" name="umurAdopter" placeholder="Umur" autocomplete="off" required>
-      <label for="umurAdopter">Tanggal Lahir</label>
+      <input type="date" class="form-control" id="tglLahir" name="tglLahir" autocomplete="off" required>
+      <label for="tglLahir">Tanggal Lahir</label>
     </div>
 
     <div class="form-floating mb-3">
-      <input type="tel" class="form-control" id="telpAdopter" name="telpAdopter" 
-         placeholder="(08xxx)" autocomplete="off" maxlength="16" required 
-         pattern="08[0-9]{8,13}" title="Masukkan nomor HP yang valid!">
-      <label for="telpAdopter">No. HP (08xxx)</label>
+      <input type="tel" class="form-control" id="telpAdopter" name="telpAdopter" placeholder="08xxxx" maxlength="13" autocomplete="off" required>
+      <label for="telpAdopter">No. HP</label>
     </div>
 
     <div class="form-floating mb-3">
@@ -40,100 +39,189 @@
 
     <div class="form-floating mb-3">
       <input type="text" class="form-control" id="alamatAdopter" name="alamatAdopter" placeholder="Alamat" autocomplete="off" required>
-      <label for="alamatAdopter">Alamat</label>
-    </div>
-
-    <div class="form-floating mb-3">
-      <input type="text" class="form-control" id="pekerjaanAdopter" name="pekerjaanAdopter" placeholder="Pekerjaan" autocomplete="off" required>
-      <label for="pekerjaanAdopter">Pekerjaan</label>
+      <label for="alamatAdopter">Alamat Lengkap</label>
     </div>
 
     <div class="mb-3">
-      <label for="tempatTinggal">Dimanakah Anda tinggal?</label>
-      <select name="tempatTinggal" id="tempatTinggal" class="form-select" required>
-        <option value="" selected disabled>Pilih tempat tinggal...</option>
-        <option value="rumah">Rumah</option>
-        <option value="kost">Kost</option>
-        <option value="dog-friendly apartment">Dog-Friendly Apartment</option>
+      <label for="pekerjaanAdopter" class="form-label">Pekerjaan</label>
+      <select name="pekerjaanAdopter" id="pekerjaanAdopter" class="form-select" required>
+        <option value="" selected disabled>Pilih pekerjaan...</option>
+        <option value="Karyawan Swasta">Karyawan Swasta</option>
+        <option value="Pengusaha">Pengusaha</option>
+        <option value="Pelajar/Mahasiswa">Pelajar/Mahasiswa</option>
+        <option value="Other">Lainnya...</option>
       </select>
+      <input type="text" class="form-control mt-2 d-none" id="pekerjaanLain" name="pekerjaanLain" placeholder="Masukkan pekerjaan Anda">
     </div>
 
-    <hr class="my-4">
+    <div class="mb-3">
+      <label for="tempatTinggal" class="form-label">Dimanakah Anda tinggal?</label>
+      <select name="tempatTinggal" id="tempatTinggal" class="form-select" required>
+        <option value="" selected disabled>Pilih tempat tinggal...</option>
+        <option value="Rumah">Rumah</option>
+        <option value="Kost">Kost</option>
+        <option value="Dog-Friendly Apartment">Dog-Friendly Apartment</option>
+        <option value="Other">Lainnya...</option>
+      </select>
+      <input type="text" class="form-control mt-2 d-none" id="tempatTinggalLain" name="tempatTinggalLain" placeholder="Masukkan tempat tinggal Anda">
+    </div>
 
-    <!-- * DATA HEWAN * -->
+    <div class="mb-3">
+      <label for="uploadKTP" class="form-label">Unggah KTP</label>
+      <input type="file" class="form-control" id="uploadKTP" name="uploadKTP" accept=".jpg,.jpeg,.png,.pdf" required>
+      <small class="text-muted">Format yang diperbolehkan: JPG, JPEG, PNG, PDF</small>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="number" class="form-control" id="jumlahOrang" name="jumlahOrang" placeholder="Jumlah" autocomplete="off" required>
+      <label for="jumlahOrang">Jumlah Orang di Tempat Tinggal Anda</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="tel" class="form-control" id="telpDarurat" name="telpDarurat" placeholder="08xxxx" maxlength="16" autocomplete="off" required>
+      <label for="telpDarurat">No. Kontak Darurat</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" id="namaDarurat" name="namaDarurat" placeholder="Pekerjaan" autocomplete="off" required>
+      <label for="namaDarurat">Nama Kontak Darurat</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" id="alasanAdopsi" name="alasanAdopsi" placeholder="Alasan" autocomplete="off" required>
+      <label for="alasanAdopsi">Alasan Adopsi</label>
+    </div>
+
+    <!-- * Data Hewan * -->
+    <hr class="my-4">
     <h4 class="mb-3">Data Hewan yang Ingin Diadopsi</h4>
 
     <div class="form-floating mb-3">
-      <input type="text" class="form-control" name="namaHewan" id="namaHewan" 
-          value="{{ animal['name'] }}" readonly>
+      <input type="text" class="form-control" id="namaHewan" value="{{ animal['name'] }}" readonly>
       <label for="namaHewan">Nama Hewan</label>
     </div>
 
     <div class="form-floating mb-3">
-      <input type="text" class="form-control" name="jkHewan" id="jkHewan" 
-          value="{{ animal['sex'] }}" readonly>
+      <input type="text" class="form-control" id="jkHewan" value="{{ animal['sex'] }}" readonly>
       <label for="jkHewan">Jenis Kelamin</label>
     </div>
 
     <div class="form-floating mb-3">
-      <input type="text" class="form-control" name="breedHewan" id="breedHewan" 
-          value="{{ animal['breed'] }}" readonly>
+      <input type="text" class="form-control" id="breedHewan" value="{{ animal['breed'] }}" readonly>
       <label for="breedHewan">Jenis Keturunan</label>
     </div>
 
-    <button type="submit" id="submitForm" class="btn btn-primary w-100 mt-3">Kirim Formulir</button>
+    <p>Perika kembali data yang anda input.</p>
+    <button id="btn-next" type="button" class="btn btn-primary w-100 mt-3">Selanjutnya</button>
 
   </form>
 </div>
 
-
 <script>
 
-  function showAlert(message, type) {
-    let alertContainer = $("#alert-container");
-    alertContainer.removeClass("d-none alert-success alert-danger").addClass(`alert alert-${type}`).html(message);
-    setTimeout(() => {
-      alertContainer.addClass("d-none");
-    }, 5000);
+  function convertFileToBase64(file, callback) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+        callback(reader.result); // Base64 string
+    };
+    reader.onerror = function (error) {
+        console.error("Error converting file:", error);
+    };
   }
 
-  // ==================== SUBMIT FORM ADOPSI ====================
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleInput = (selectEl, inputEl) => {
+        inputEl.classList.toggle("d-none", selectEl.value !== "Other");
+        inputEl.required = selectEl.value === "Other";
+    };
 
-  $(document).ready(function() {
-    $("#adoption-form").submit(function(e) {
-      e.preventDefault();
+    const pekerjaanAdopter = document.getElementById("pekerjaanAdopter");
+    const pekerjaanLain = document.getElementById("pekerjaanLain");
+    const tempatTinggal = document.getElementById("tempatTinggal");
+    const tempatTinggalLain = document.getElementById("tempatTinggalLain");
 
-      let formData = {
-        namaAdopter: $("#namaAdopter").val(),
-        umurAdopter: $("#umurAdopter").val(),
-        telpAdopter: $("#telpAdopter").val(),
-        emailAdopter: $("#emailAdopter").val(),
-        pekerjaanAdopter: $("#pekerjaanAdopter").val(),
-        tempatTinggal: $("#tempatTinggal").val(),
-        namaHewan: $("#namaHewan").val(),
-        jenisKelamin: $("#jkHewan").val(),
-        breedHewan: $("#breedHewan").val()
-      };
+    pekerjaanAdopter.addEventListener("change", () => toggleInput(pekerjaanAdopter, pekerjaanLain));
+    tempatTinggal.addEventListener("change", () => toggleInput(tempatTinggal, tempatTinggalLain));
+  });
 
-      $.ajax({
-        url: "/submit_adoption",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(formData),
-        success: function(response) {
-          alert(response.message);
-          if (response.success) {
-              window.location.href = "/home";
-          }
-        },
-        error: function(xhr) {
-          showAlert(xhr.responseJSON ? xhr.responseJSON.message : "Terjadi kesalahan.");
+  document.getElementById("btn-next").addEventListener("click", function () {
+    let form = document.getElementById("adoption-form");
+    let formData = new FormData(form);
+    let formObject = Object.fromEntries(formData.entries());
+    let emptyFields = [];
+
+    console.log("Form Object:", formObject); // Debugging
+    
+    let fileInput = document.getElementById("uploadKTP");
+    let file = fileInput.files[0];
+    if (!file) {
+      showAlertMessage("Harap unggah foto atau scan KTP.");
+      return;
+    }
+
+    // Ambil data hewan
+    ["namaHewan", "jkHewan", "breedHewan"].forEach(id => {
+      formObject[id] = document.getElementById(id)?.value || "";
+    });
+
+    // 🔹 **Validasi Input Kosong** (Prioritas utama)
+    for (let key in formObject) {
+        let value = formObject[key];
+
+        if (typeof value !== "string") continue;
+
+        // Kecualikan input "Lainnya" jika tidak dipilih
+        if ((key === "pekerjaanLain" && formObject.pekerjaanAdopter !== "Other") ||
+            (key === "tempatTinggalLain" && formObject.tempatTinggal !== "Other")) {
+            continue;
         }
-      });
+
+        if (!value.trim()) emptyFields.push(key);
+    }
+
+    // Cek apakah ada field kosong
+    if (emptyFields.length) {
+        showAlertMessage('Semua field wajib diisi!');
+        return;
+    }
+
+    // 🔹 **Validasi Nomor Telepon (Hanya Angka)**
+    let tel = formObject.telpAdopter?.trim() || "";
+    if (!/^\d+$/.test(tel)) {
+        showAlertMessage("Nomor telepon hanya boleh mengandung angka.");
+        return;
+    }
+
+    // 🔹 **Validasi Format Email**
+    let email = formObject.emailAdopter?.trim() || "";
+    if (!email.includes("@")) {
+        showAlertMessage("Email tidak valid. Harus mengandung '@'.");
+        return;
+    }
+
+    // 🔹 **Validasi Upload KTP**
+    let uploadKTP = document.getElementById("uploadKTP").files[0];
+    if (!uploadKTP) {
+        showAlertMessage("Anda harus mengunggah KTP.");
+        return;
+    }
+
+    // Cek format file
+    let allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+    if (!allowedTypes.includes(uploadKTP.type)) {
+        showAlertMessage("Format KTP harus JPG, JPEG, PNG, atau PDF.");
+        return;
+    }
+
+    // Konversi file ke Base64 sebelum disimpan ke localStorage
+    convertFileToBase64(file, function (base64File) {
+      formObject.uploadKTP = base64File; // Simpan sebagai Base64 string
+      localStorage.setItem("adoptionData", JSON.stringify(formObject));
+      window.location.href = "/syarat_adopsi";
     });
   });
 
 </script>
-
 
 {% endblock %}

@@ -2,20 +2,40 @@
 {% block content %}
     
 <div class="container mt-4">
-    <h1>User Profile</h1>
+    <h3 class="text-center">Akun</h3>
+    <hr>
+    <h4> Hello, <span id="username">User</span></h4>
 
-    <!-- Display User Data -->
-    <div class="profile-info">
-        <p><strong>Username:</strong> <span id="username">User</span></p>
-        <p><strong>Email:</strong> <span id="email">user@gmail.com</span></p>
+    <!-- Menu Navigasi Akun -->
+    <div class="menu-container mt-3 shadow-sm border rounded bg-light">
+        <div class="menu-item">
+            <a href="#">
+                <i class="fas fa-user"></i> <span>Profil Saya</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="{{ url_for('user.adoption_info') }}" class="{% if request.path == url_for('user.adoption_info') %}active{% endif %}">
+                <i class="fas fa-paw"></i> <span>Informasi Adopsi</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="#">
+                <i class="fas fa-cog"></i> <span>Pengaturan</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="{{ url_for('auth.logout') }}" class="{% if request.path == url_for('auth.logout') %}active{% endif %}">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </a>
+        </div>
     </div>
 
     <!-- Button Logout -->
-    <a href="{{ url_for('auth.logout') }}">
+    <!-- <a href="{{ url_for('auth.logout') }}">
         <button type="submit" class="btn btn-primary mt-4 w-100">
             Logout <i class="fa-solid fa-arrow-right"></i>
         </button>
-    </a>
+    </a> -->
 </div>
 
 {% endblock %}

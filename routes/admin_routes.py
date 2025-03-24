@@ -18,41 +18,52 @@ def dashboard():
 @admin_bp.route("/adoptions", methods=["GET"])
 def get_adoptions():
     try:
-        adoptions = list(mongo.db.form_adoption.find({}))  # Jangan hilangkan _id
-
+        adoptions = list(mongo.db.form_adoption.find({}))
+        
         for adoption in adoptions:
             adoption['_id'] = str(adoption['_id'])
-        return jsonify({"success": True, "data": adoptions})
-    
+
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify({"success": True, "data": adoptions})
+        
+        return render_template("admin/data_adopsi.html", adoptions=adoptions)
+
     except Exception as e:
-        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+        return render_template("admin/data_adopsi.html", adoptions=[])
+
     
 #* ========================= GET DATA DETAIL ADOPSI ========================= #
 
-@admin_bp.route("/adoption/<adoption_id>", endpoint="adoption_detail")
+@admin_bp.route("/adoption/<adoption_id>", methods=["GET"])
 def adoption_detail(adoption_id):
     try:
-        # Cari adopsi berdasarkan ID
         adoption = mongo.db.form_adoption.find_one({"_id": ObjectId(adoption_id)})
         if not adoption:
-            return "Adopsi tidak ditemukan", 404
+            return jsonify({"success": False, "message": "Adopsi tidak ditemukan"}), 404
 
-        # Mengubah MongoDB ObjectId menjadi string
-        adoption['_id'] = str(adoption['_id'])
+        adoption["_id"] = str(adoption["_id"])
+        adoption["adopter"] = adoption.get("adopter", {})
+        adoption["animal"] = adoption.get("animal", {})
+        adoption["emergency_contact"] = adoption.get("emergency_contact", {})
+
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify({"success": True, "data": adoption})
 
         return render_template("admin/adoption_detail.html", adoption=adoption)
-    except Exception as e:
-        return str(e), 500
-    
 
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
     
+#* ========================= UPDATE STATUS ADOPSI ========================= #
+
 @admin_bp.route("/adoption/update_status", methods=["POST"])
 def update_status():
     try:
         adoption_id = request.form['adoption_id']
         new_status = request.form['status']
-        
-        # Validasi dan update status di MongoDB
+
         result = mongo.db.form_adoption.update_one(
             {"_id": ObjectId(adoption_id)},
             {"$set": {"status": new_status}}

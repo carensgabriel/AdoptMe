@@ -1,81 +1,81 @@
 {% extends "sidebar.html" %}
 {% block content %}
 
-<h2>Selamat Datang, {{ auth.username }}</h2>
-<p>Ringkasan data adopsi hewan.</p>
+<style>
+    
+    .chart-container {
+        width: 100%; /* Sesuaikan lebar */
+        max-width: 600px; /* Batas maksimal */
+        height: 300px; /* Tinggi tetap */
+        margin: auto; /* Pusatkan */
+    }
+    #adoptionChart {
+        width: 100% !important;
+        height: 100% !important;
+    }
 
-<!-- Kartu Ringkasan -->
-<div class="row">
-    <div class="col-md-4">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <h5>Total Pengajuan Adopsi</h5>
-                <h2 id="totalAdopsi">0</h2>
+</style>
+
+<div class="container mt-4">
+
+    <h2>Selamat Datang, {{ auth.username }}</h2>
+    <p>Ringkasan data adopsi hewan.</p>
+    <hr>
+
+    <!-- Kartu Ringkasan -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <h5>Total Pengajuan Adopsi</h5>
+                    <h2 id="totalAdopsi">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5>Adopsi Pending</h5>
+                    <h2 id="pendingAdopsi">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Adopsi Disetujui</h5>
+                    <h2 id="approvedAdopsi">0</h2>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card bg-warning text-white">
-            <div class="card-body">
-                <h5>Adopsi Pending</h5>
-                <h2 id="pendingAdopsi">0</h2>
-            </div>
-        </div>
+
+    <!-- Grafik Adopsi -->
+    <div class="chart-container mt-4">
+        <canvas id="adoptionChart"></canvas>
     </div>
-    <div class="col-md-4">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <h5>Adopsi Disetujui</h5>
-                <h2 id="approvedAdopsi">0</h2>
-            </div>
-        </div>
-    </div>
+
 </div>
 
-<!-- Tabel Data Adopsi -->
-<h3 class="mt-5">Daftar Pengajuan Adopsi</h3>
-<table class="table table-bordered mt-3">
-    <thead class="table-dark">
-        <tr>
-            <th>Nama Adopter</th>
-            <th>Nama Hewan</th>
-            <th>Status</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-    <tbody id="adoptionTable">
-        {% for adoption in adoptions %}
-        <tr>
-            <td>{{ adoption['adopter']['name'] }}</td>
-            <td>{{ adoption['animal']['name'] }}</td>
-            <td>{{ adoption['status'] }}</td>
-            <td>
-                <a href="{{ url_for('admin.adoption_detail', adoption_id=adoption['_id']) }}" class="btn btn-sm btn-primary">Detail</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
 $(document).ready(function() {
     getDataAdopsi();
 });
 
 function getDataAdopsi() {
     $.ajax({
-        url: "/adoptions", // Panggil API Flask untuk mendapatkan data adopsi
+        url: "/adoptions",
         type: "GET",
         success: function(response) {
             if (response.success) {
                 showDataAdopsi(response.data);
             } else {
-                alert("Gagal mengambil data: " + response.message);
+                showAlertMessage("Gagal mengambil data: " + response.message);
             }
         },
         error: function(xhr) {
-            alert("Terjadi kesalahan saat mengambil data.");
+            showAlertMessage("Terjadi kesalahan saat mengambil data.");
         }
     });
 }
@@ -84,6 +84,7 @@ function showDataAdopsi(adoptions) {
     let totalAdopsi = adoptions.length;
     let pendingAdopsi = adoptions.filter(a => a.status === "Pending").length;
     let approvedAdopsi = adoptions.filter(a => a.status === "Approved").length;
+    let rejectedAdopsi = adoptions.filter(a => a.status === "Rejected").length;
 
     // Update data di dashboard
     $("#totalAdopsi").text(totalAdopsi);
@@ -110,7 +111,41 @@ function showDataAdopsi(adoptions) {
             console.error("ID Adopsi tidak ditemukan atau invalid.");
         }
     });
+
+    // Perbarui grafik
+    updateChart(pendingAdopsi, approvedAdopsi, rejectedAdopsi);
 }
+
+function updateChart(pending, approved, rejected) {
+    const ctx = document.getElementById("adoptionChart").getContext("2d");
+
+    // Hapus chart sebelumnya jika ada
+    if (window.myChart) {
+        window.myChart.destroy();
+    }
+
+    // Buat chart baru
+    window.myChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: ["Pending", "Approved", "Rejected"],
+            datasets: [{
+                data: [pending, approved, rejected],
+                backgroundColor: ["#ffc107", "#28a745", "#dc3545"]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            }
+        }
+    });
+}
+
 
 </script>
 

@@ -1,48 +1,60 @@
 {% extends "sidebar.html" %}
-
 {% block content %}
+
 <h2>Detail Adopsi</h2>
 <hr>
 
-<div class="row">
-    <div class="col-md-6">
-        <h4>Data Calon Adopter</h4>
-        <ul>
-            <li><strong>Nama:</strong> {{ adoption.adopter.name }}</li>
-            <li><strong>Umur:</strong> {{ adoption.adopter.age }}</li>
-            <li><strong>Telepon:</strong> {{ adoption.adopter.phone }}</li>
-            <li><strong>Email:</strong> {{ adoption.adopter.email }}</li>
-            <li><strong>Pekerjaan:</strong> {{ adoption.adopter.job }}</li>
-            <li><strong>Tempat Tinggal:</strong> {{ adoption.adopter.residence }}</li>
-        </ul>
-    </div>
-    
-    <div class="col-md-6">
-        <h4>Data Hewan</h4>
-        <ul>
-            <li><strong>Nama Hewan:</strong> {{ adoption.animal.name }}</li>
-            <li><strong>Spesies:</strong> {{ adoption.animal.species }}</li>
-            <li><strong>Jenis Kelamin:</strong> {{ adoption.animal.gender }}</li>
-        </ul>
-    </div>
+<div class="container mt-4">
+    <h4>Status: <span id="adoptionStatus">{{ adoption.status }}</span></h4>
+    <p><strong>Waktu Pengajuan:</strong> {{ adoption.submitted_at.strftime('%d-%m-%Y %H:%M:%S') }}</p>
+
+    <button id="updateStatusBtn" class="btn btn-primary mb-4">Update Status</button>
+
+    <!-- Data Calon Adopter -->
+    <h4>Data Calon Adopter</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nama</th>
+                <th>Tanggal Lahir</th>
+                <th>Telepon</th>
+                <th>Email</th>
+                <th>Pekerjaan</th>
+                <th>Alamat Lengkap</th>
+                <th>Tempat Tinggal</th>
+                <th>Alasan</th>
+                <th>Kontak Darurat</th>
+            </tr>
+        </thead>
+        <tbody id="adopterDetail">
+            <tr><td colspan="9" class="text-center">Memuat data...</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Data Hewan -->
+    <h4 class="mt-4">Data Hewan</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nama Hewan</th>
+                <th>Breed</th>
+                <th>Jenis Kelamin</th>
+            </tr>
+        </thead>
+        <tbody id="animalDetail">
+            <tr><td colspan="3" class="text-center">Memuat data...</td></tr>
+        </tbody>
+    </table>
 </div>
 
 <hr>
 
-<h4>Status: <span id="adoptionStatus">{{ adoption.status }}</span></h4>
-<p><strong>Waktu Pengajuan:</strong> {{ adoption.submitted_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-
-<button id="updateStatusBtn" class="btn btn-primary">Ubah Status</button>
-
 <!-- Modal -->
-<div class="modal" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="statusModalLabel">Pilih Status Adopsi</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
       </div>
       <div class="modal-body">
         <select id="newStatus" class="form-control">
@@ -52,47 +64,100 @@
         </select>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-        <button type="button" class="btn btn-primary" id="saveStatusBtn">Simpan Status</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-success" id="saveStatusBtn">Update Status</button>
       </div>
     </div>
   </div>
 </div>
 
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $("#updateStatusBtn").click(function() {
-            $('#statusModal').modal('show');
-        });
 
-      
-        $("#saveStatusBtn").click(function() {
-            $.ajax({
-                url: "/adoption/update_status",
-                type: "POST",
-                data: {
-                    adoption_id: "{{ adoption._id }}",
-                    status: $("#newStatus").val()
-                },
-                success: function(response) {
-                    if (response.success) {
+$(document).ready(function() {
+    let adoptionId = "{{ adoption._id }}";  
+    getAdoptionData(adoptionId);
 
-                        $("#adoptionStatus").text($("#newStatus").val());
-                        alert("Status berhasil diubah!");
-                        $('#statusModal').modal('hide');
-                    } else {
-                        alert("Gagal mengubah status: " + response.message);
-                    }
-                },
-                error: function(xhr) {
-                    alert("Terjadi kesalahan saat mengubah status.");
-                }
-            });
-        });
+    $("#updateStatusBtn").click(function() {
+        $('#statusModal').modal('show');
     });
+
+    $("#saveStatusBtn").click(function() {
+        updateAdoptionStatus(adoptionId);
+    });
+});
+
+
+function getAdoptionData(adoptionId) {
+    $.ajax({
+        url: `/adoption/${adoptionId}`,
+        type: "GET",
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+        success: function(response) {
+            let adoption = response.data;
+
+            let adopterRow = `<tr>
+                <td>${adoption.adopter.name}</td>
+                <td>${adoption.adopter.datebirth}</td>
+                <td>${adoption.adopter.phone}</td>
+                <td>${adoption.adopter.email}</td>
+                <td>${adoption.adopter.occupation}</td>
+                <td>${adoption.adopter.address}</td>
+                <td>${adoption.adopter.residence}</td>
+                <td>${adoption.adopter.reason}</td>
+                <td>${adoption.emergency_contact.phone} (${adoption.emergency_contact.name})</td>
+            </tr>`;
+            $("#adopterDetail").html(adopterRow);
+
+            let animalRow = `<tr>
+                <td>${adoption.animal.name}</td>
+                <td>${adoption.animal.breed}</td>
+                <td>${adoption.animal.gender}</td>
+            </tr>`;
+            $("#animalDetail").html(animalRow);
+        },
+        error: function(xhr) {
+            showAlertMessage("Terjadi kesalahan.");
+        }
+    });
+}
+
+function updateAdoptionStatus(adoptionId) {
+    $("#statusModal").on("show.bs.modal", function () {
+        $(".modal-content").css({ opacity: 0, transform: "scale(0.9)" }).animate({
+            opacity: 1,
+            transform: "scale(1)"
+        }, 300);
+    });
+
+    $("#statusModal").on("hide.bs.modal", function () {
+        $(".modal-content").animate({
+            opacity: 0,
+            transform: "scale(0.9)"
+        }, 300);
+    });
+
+    $.ajax({
+        url: "/adoption/update_status",
+        type: "POST",
+        data: {
+            adoption_id: adoptionId,
+            status: $("#newStatus").val()
+        },
+        success: function(response) {
+            if (response.success) {
+                $("#adoptionStatus").text($("#newStatus").val());
+                showSuccessMessage("Status berhasil diubah!");
+                $('#statusModal').modal('hide');
+            } else {
+                showAlertMessage(response.message);
+            }
+        },
+        error: function(xhr) {
+            showAlertMessage("Terjadi kesalahan.");
+        }
+    });
+}
+    
 </script>
 
 {% endblock %}
