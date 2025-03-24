@@ -43,12 +43,6 @@ def syarat_adopsi():
 
 #* ==================== SUBMIT FORM ADOPSI ==================== #
 
-UPLOAD_FOLDER = "static/uploads/ktp"
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "pdf"}
-
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
