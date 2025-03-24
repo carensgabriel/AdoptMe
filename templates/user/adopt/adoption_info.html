@@ -57,28 +57,26 @@ $(document).ready(function() {
                                      adoption.status === "Rejected" ? "bg-danger" : "bg-warning";
 
                     adoptionHTML += `
-                      <div class="card shadow-sm mb-3">
-                          <div class="row g-0">
-                              <!-- Bagian gambar -->
-                              <div class="col-12 col-sm-4 col-md-3 p-2">
-                                  <img src="/static/uploads/${adoption.animal.image}" class="img-fluid img-adoption" alt="Foto Hewan">
-                              </div>
-                              <!-- Bagian informasi -->
-                              <div class="col-12 col-sm-8 col-md-9">
-                                  <div class="card-body">
-                                      <h5 class="card-title"><strong>${adoption.animal.name}</strong></h5>
-                                      <hr>
-                                      <p class="card-text">
-                                          <strong>Tanggal Pengajuan:</strong><br>
-                                          ${adoption.submission_date}
-                                          <br>
-                                          <strong>Status:</strong><br>
-                                          <span class="badge ${badgeClass}">${adoption.status}</span>
-                                      </p>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                        <div class="card shadow-sm mb-3">
+                            <div class="row g-0">
+                                <div class="col-12 col-sm-4 col-md-4 p-2">
+                                    <img src="/static/uploads/animals/${adoption.animal.image}" class="img-fluid img-adoption" alt="Foto Hewan">
+                                </div>
+                                <div class="col-12 col-sm-8 col-md-8">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h5 class="card-title"><strong>${adoption.animal.name}</strong></h5>
+                                            <span class="badge ${badgeClass}">${adoption.status}</span>
+                                        </div>
+                                        <hr>
+                                        <p class="card-text">
+                                            <strong>Tanggal Pengajuan:</strong><br>
+                                            ${adoption.submission_date}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     `;
                 });
                 $("#adoption-list").html(adoptionHTML);

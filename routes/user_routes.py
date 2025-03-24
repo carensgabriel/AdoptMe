@@ -57,6 +57,7 @@ def allowed_file(filename):
 def submit_adoption():
     try:
         user = get_current_user()
+
         # Ambil JSON dari form data
         json_data = request.form.get("data")
         if not json_data:
@@ -64,15 +65,11 @@ def submit_adoption():
         
         data = json.loads(json_data)
 
-        # Ambil file KTP
-        file = request.files.get("uploadKTP")
-        if not file or not allowed_file(file.filename):
-            return jsonify({"success": False, "message": "Harap unggah KTP dengan format JPG, JPEG, PNG, atau PDF."}), 400
-        
-        # Simpan file dengan nama aman
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(file_path)
+        # Ambil file KTP dalam bentuk Base64
+        file_ktp = request.form.get("uploadKTP")  # Ambil string Base64
+
+        if not file_ktp:
+            return jsonify({"success": False, "message": "Harap unggah KTP dalam format Base64."}), 400
 
         new_adoption = {
             "adopter": {
@@ -84,7 +81,7 @@ def submit_adoption():
                 "occupation": data.get("pekerjaanAdopter", ""),
                 "residence": data.get("tempatTinggalLain", "") if data.get("tempatTinggal") == "Other" else data.get("tempatTinggal", ""),
                 "reason": data.get("alasanAdopsi", ""),
-                "ktp_file": file_path
+                "ktp_file": file_ktp
             },
             "animal": {
                 "name": data.get("namaHewan", ""),
@@ -110,27 +107,46 @@ def submit_adoption():
         print(e)
         return jsonify({"success": False, "message": f"Terjadi kesalahan: {e}"}), 500
     
+
+@user_bp.route("/get_adoption/<adoption_id>", methods=["GET"])
+@login_required
+def get_adoption(adoption_id):
+    try:
+        adoption = mongo.db.form_adoption.find_one({"_id": ObjectId(adoption_id)})
+
+        if not adoption:
+            return jsonify({"success": False, "message": "Data adopsi tidak ditemukan"}), 404
+
+        # Kirim data Base64 ke frontend
+        return jsonify({
+            "success": True,
+            "adoption": {
+                "adopter": adoption["adopter"],
+                "animal": adoption["animal"],
+                "status": adoption["status"],
+                "submitted_at": adoption["submitted_at"].strftime("%d-%m-%Y"),
+            }
+        })
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Terjadi kesalahan: {e}"}), 500
+    
 #* ==================== INFORMASI ADOPSI ==================== #
 
 @user_bp.route("/adoption_info", methods=["GET"])
 @login_required
 def adoption_info():
     try:
-        # Jika permintaan dari AJAX, kirimkan data dalam format JSON
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             user = get_current_user()
 
             if not user or not user.get("email"):
                 return jsonify({"success": False, "message": "User tidak ditemukan"}), 401
 
-            # Ambil data adopsi berdasarkan email user yang login
             form_adopsi = list(mongo.db.form_adoption.find({"user.name": user["name"]}))
-
             list_adoptions = []
             for adoption in form_adopsi:
-                # Ambil informasi hewan berdasarkan nama hewan
                 animal_info = mongo.db.animals.find_one({"name": adoption["animal"]["name"]}) if "animal" in adoption else None
-
                 list_adoptions.append({
                     "animal": {
                         "name": animal_info["name"] if animal_info else "Tidak tersedia",
@@ -141,8 +157,7 @@ def adoption_info():
                 })
 
             return jsonify({"success": True, "message": list_adoptions})
-
-        # Jika bukan permintaan AJAX, render template
+        
         return render_template("user/adopt/adoption_info.html")
     
     except Exception as e:

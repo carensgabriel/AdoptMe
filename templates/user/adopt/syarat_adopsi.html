@@ -57,45 +57,31 @@
 
 <script>
 
-  function convertBase64ToFile(base64String, filename, mimeType) {
-    let byteCharacters = atob(base64String.split(",")[1]);
-    let byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    let byteArray = new Uint8Array(byteNumbers);
-    return new File([byteArray], filename, { type: mimeType });
-  }
-
-
   $("#syarat-form").on("submit", function (e) {
     e.preventDefault();
 
     if (!$("#setuju").is(":checked")) {
-      showAlertMessage("Anda harus menyetujui syarat sebelum lanjut.");
-      return;
+        showAlertMessage("Anda harus menyetujui syarat sebelum lanjut.");
+        return;
     }
 
     let jsonData = localStorage.getItem("adoptionData");
 
     if (!jsonData) {
-      showAlertMessage("Data adopsi tidak ditemukan. Silakan isi formulir terlebih dahulu.");
-      return;
+        showAlertMessage("Data adopsi tidak ditemukan. Silakan isi formulir terlebih dahulu.");
+        return;
     }
 
     jsonData = JSON.parse(jsonData);
 
     if (!jsonData.uploadKTP) {
-      showAlertMessage("Data KTP tidak ditemukan.");
-      return;
+        showAlertMessage("Data KTP tidak ditemukan.");
+        return;
     }
-
-    // Konversi Base64 ke File sebelum dikirim ke backend
-    let file = convertBase64ToFile(jsonData.uploadKTP, "uploadKTP.jpeg", "image/jpeg");
 
     let formData = new FormData();
     formData.append("data", JSON.stringify(jsonData));
-    formData.append("uploadKTP", file);
+    formData.append("uploadKTP", jsonData.uploadKTP);  // Kirim sebagai string Base64
 
     $.ajax({
       url: "/submit_adoption",
@@ -104,12 +90,12 @@
       contentType: false,
       data: formData,
       success: function (response) {
-        console.log(107, response);
-        showSuccessMessage(response.message);
-        localStorage.removeItem("adoptionData");
+          console.log(response);
+          showSuccessMessage(response.message);
+          localStorage.removeItem("adoptionData");
       },
       error: function (error) {
-        showAlertMessage(error.responseJSON ? error.responseJSON.message : "Terjadi kesalahan.");
+          showAlertMessage(error.responseJSON ? error.responseJSON.message : "Terjadi kesalahan.");
       }
     });
   });
