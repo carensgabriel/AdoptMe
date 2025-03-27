@@ -85,7 +85,7 @@ def animal_details(animal_id):
             animal["_id"] = str(animal["_id"])
             return jsonify(animal)
 
-        return render_template("user/animals/details.html", animal_id=animal_id)
+        return render_template("user/animals/animal_details.html", animal_id=animal_id)
     
     except Exception as e:
         print(e)
