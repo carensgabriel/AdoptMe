@@ -1,0 +1,132 @@
+{% extends "sidebar.html" %}
+{% block content %}
+
+<style>
+    .table th {
+        text-align: center;
+    }
+    .animal-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="container">
+    <h2>Selamat Datang, {{ auth.username }}</h2>
+    <p>Data hewan.</p>
+    <hr>
+
+    <h3>Daftar Hewan</h3>
+
+    <!-- Filter Status -->
+    <div class="mb-3 d-flex align-items-center">
+        <label for="filterStatus" class="me-2">Filter:</label>
+        <select id="filterStatus" class="form-select w-auto">
+            <option value="">Semua</option>
+            <option value="false">Tersedia</option>
+            <option value="true">Diadopsi</option>
+        </select>
+    </div>
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>No</th>
+                <th>Gambar Hewan</th>
+                <th>Nama Hewan</th>
+                <th>Breed</th>
+                <th>Jenis Kelamin</th>
+                <th>Tanggal Lahir</th>
+            </tr>
+        </thead>
+        <tbody id="animalsTable">
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+const formatDate = (date) => {
+  if (!date) return "Tidak tersedia";
+
+  let d = new Date(date);
+  
+  let tanggal = d.toLocaleDateString("id-ID", { 
+      day: "numeric", 
+      month: "long", 
+      year: "numeric" 
+  });
+  return `${tanggal}`;
+};
+
+// Fungsi untuk menghitung umur dari tanggal lahir
+function calculateAge(datebirth) {
+  if (!datebirth) return "-";
+
+  const birthDate = new Date(datebirth);
+  const today = new Date();
+
+  let years = today.getFullYear() - birthDate.getFullYear();
+  let monthsDiff = today.getMonth() - birthDate.getMonth();
+
+  if (today.getDate() < birthDate.getDate()) monthsDiff--;
+  if (monthsDiff < 0) { years--; monthsDiff += 12; }
+
+  return years > 0 ? `(${years} Tahun, ${monthsDiff} Bulan)` : `(${monthsDiff} Bulan)`;
+}
+
+$(document).ready(function () {
+    renderDataAnimals();
+    $("#filterStatus").on("change", function () {
+        renderDataAnimals();
+    });
+});
+
+function renderDataAnimals() {
+    $.ajax({
+        url: "{{ url_for('admin.animals_list') }}",
+        type: "GET",
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+        success: function (response) {
+            console.log(response.data);
+            if (response.success) {
+                getDataAnimals(response.data);
+            } else {
+                showAlertMessage("Gagal mengambil data hewan.");
+            }
+        },
+        error: function () {
+            showAlertMessage("Terjadi kesalahan server.");
+        }
+    });
+}
+
+function getDataAnimals(animals) {
+    let selectedStatus = $("#filterStatus").val(); // Ambil nilai filter
+    let filteredAnimals = selectedStatus !== "" ? animals.filter(animal => animal.status.adoption_status === (selectedStatus === "true")): animals;
+    $("#animalsTable").empty();
+
+    if (filteredAnimals.length === 0) {
+        $("#animalsTable").append(`<tr><td colspan="6" class="text-center">Tidak ada data hewan.</td></tr>`);
+        return;
+    }
+
+    filteredAnimals.forEach((animal, index) => {
+        let row = `
+        <tr onclick="window.location.href='/animals/${animal._id}'" style="cursor: pointer;">
+                <td class="text-center">${index + 1}</td>
+                <td class="text-center"><img src="${animal.image}" alt="Gambar ${animal.name}" class="animal-img"></td>
+                <td>${animal.name}</td>
+                <td>${animal.breed}</td>
+                <td>${animal.sex}</td>
+                <td>${formatDate(animal.datebirth.$date)} ${calculateAge(animal.datebirth.$date)}</td>
+            </tr>
+        `;
+        $("#animalsTable").append(row);
+    });
+}
+</script>
+
+{% endblock %}

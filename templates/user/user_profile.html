@@ -2,8 +2,8 @@
 {% block content %}
     
 <div class="container mt-4 p-4">
-    <h3 class="text-center">Akun</h3>
-    <h4> Hello, User</h4>
+    <h2 class="text-center">{{ title }}</h2>
+    <h4 class="mb-3"> Hello, {{ auth.username }}</h4>
 
     <!-- Menu Navigasi Akun -->
     <div class="menu-item">
@@ -25,7 +25,7 @@
     </div>
     <hr>
     <div class="menu-item">
-        <a href="#" class="d-flex align-items-center">
+        <a href="{{ url_for('user.post_animals') }}" class="d-flex align-items-center {% if request.path == url_for('user.post_animals') %}active{% endif %}">
             <span class="d-flex align-items-center flex-grow-1">
                 <i class="fas fa-plus-circle"></i> Posting Hewan
             </span>

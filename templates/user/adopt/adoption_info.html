@@ -2,6 +2,7 @@
 {% block content %}
 
 <style>
+
 .img-adoption {
     width: 100%;  
     height: 180px;
@@ -12,15 +13,10 @@
 .card {
     width: 100%;
     max-width: 500px;
-    margin: auto;
 }
 
 .card-body {
     padding: 15px;
-}
-
-.card-title {
-    font-size: 18px;
 }
 
 .card-text {
@@ -35,56 +31,77 @@
 
 </style>
 
-<div class="container mt-4">
-    <h2>Informasi Adopsi</h2>
-    <p>Berikut adalah status adopsi hewan yang telah Anda ajukan.</p>
+<div class="container mt-4 p-3">
 
-    <div id="adoption-list">
-
+    <div class="position-relative justify-content-center">
+        <a href="{{ url_for('user.user_profile') }}" class="position-absolute start-0 ms-3 text-dark top-50 translate-middle-y">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <h2 class="m-0 text-center">{{ title }}</h2>
     </div>
+
+    <div id="adoption-list" class="m-3"></div>
 </div>
 
 <script>
 $(document).ready(function() {
+    jQuery("#loading-screen").show();
     $.ajax({
-        url: "/adoption_info",
+        url: "{{ url_for('user.adoption_info') }}",        
         type: "GET",
         success: function(response) {
             if (response.success && response.message.length > 0) {
-                let adoptionHTML = "";
+                let adoption_data = "";
                 response.message.forEach((adoption) => {
-                    let badgeClass = adoption.status === "Approved" ? "bg-success" :
+                    let status = adoption.status === "Approved" ? "bg-success" :
                                      adoption.status === "Rejected" ? "bg-danger" : "bg-warning";
 
-                    adoptionHTML += `
-                        <div class="card shadow-sm mb-3">
-                            <div class="row g-0">
-                                <div class="col-12 col-sm-4 col-md-4 p-2">
-                                    <img src="/static/uploads/animals/${adoption.animal.image}" class="img-fluid img-adoption" alt="Foto Hewan">
-                                </div>
-                                <div class="col-12 col-sm-8 col-md-8">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <h5 class="card-title"><strong>${adoption.animal.name}</strong></h5>
-                                            <span class="badge ${badgeClass}">${adoption.status}</span>
+                    adoption_data += `
+                        <a href="/adoption_detail/${adoption._id}" class="text-decoration-none text-dark">
+                            <div class="card shadow-sm mb-3">
+                                <div class="row g-0">
+                                    <div class="col-12 col-sm-4 col-md-4 p-2">
+                                        <img src="${adoption.animal.image}" class="img-fluid img-adoption" alt="Foto Hewan">
+                                    </div>
+                                    <div class="col-12 col-sm-8 col-md-8">
+                                        <div class="card-body align-items-center">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h5 class="mb-0"><strong>${adoption.animal.name}</strong></h5>
+                                                <span class="badge ${status}">${adoption.status}</span>
+                                            </div>
+                                            <hr>
+                                            <p class="card-text">
+                                                <strong>Tanggal Pengajuan:</strong><br>
+                                                ${adoption.submit_date}
+                                                <br>
+                                                <strong>Tanggal Kunjungan:</strong><br>
+                                                ${adoption.visit_date || "-"}
+                                            </p>
                                         </div>
-                                        <hr>
-                                        <p class="card-text">
-                                            <strong>Tanggal Pengajuan:</strong><br>
-                                            ${adoption.submission_date}
-                                        </p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     `;
                 });
-                $("#adoption-list").html(adoptionHTML);
+                $("#adoption-list").html(adoption_data);
+                jQuery("#loading-screen").hide();
             } else {
-                $("#adoption-list").html('<p class="text-center">Belum ada pengajuan adopsi.</p>');
+                $("#adoption-list").html(`
+                    <div class="text-center p-4">
+                        <img src="/static/img/empty-adoption.png" alt="Tidak ada adopsi" width="150">
+                        <h5 class="text-muted">Belum ada pengajuan adopsi</h5>
+                        <p class="text-secondary">Yuk, cari teman berbulu baru dan buat pengajuan adopsi sekarang!</p>
+                        <a href="/animals" class="btn btn-outline-primary mt-2">
+                            <i class="fas fa-paw"></i> Cari Hewan untuk Diadopsi
+                        </a>
+                    </div>
+                `);
+                jQuery("#loading-screen").hide();                
             }
         },
         error: function() {
+            jQuery("#loading-screen").hide();
             $("#adoption-list").html('<p class="text-danger text-center">Gagal mengambil data adopsi.</p>');
         }
     });

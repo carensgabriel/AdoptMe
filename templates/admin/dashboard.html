@@ -16,14 +16,14 @@
 
 </style>
 
-<div class="container mt-4">
+<div class="container">
 
     <h2>Selamat Datang, {{ auth.username }}</h2>
     <p>Ringkasan data adopsi hewan.</p>
     <hr>
 
     <!-- Kartu Ringkasan -->
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-md-4">
             <div class="card bg-secondary text-white">
                 <div class="card-body">
@@ -51,31 +51,96 @@
     </div>
 
     <!-- Grafik Adopsi -->
-    <div class="chart-container mt-4">
+    <!-- <div class="chart-container mt-4">
         <canvas id="adoptionChart"></canvas>
+    </div> -->
+    <hr>
+
+    <h3>Daftar Pengajuan Adopsi</h3>
+    <!-- Filter -->
+    <div class="row mb-3">
+        <div class="col-sm-3">
+            <input type="date" id="filterStartDate" class="form-control" placeholder="Dari Tanggal">
+        </div>
+        <div class="col-sm-3">
+            <input type="date" id="filterEndDate" class="form-control" placeholder="Sampai Tanggal">
+        </div>
+        <div class="col-sm-3">
+            <input type="text" id="filterAnimal" class="form-control" placeholder="Cari Nama Hewan">
+        </div>
+        <div class="col-sm-3">
+            <select id="filterStatus" class="form-control">
+                <option value="">Semua Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+        </div>
     </div>
+
+    <table class="table table-bordered mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>No</th>
+                <th>Nama Adopter</th>
+                <th>Nama Hewan</th>
+                <th>Tanggal Pengajuan</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="adoptionTable">
+
+        </tbody>
+    </table>
 
 </div>
 
 <script>
 
-$(document).ready(function() {
+const formatDate = (date) => {
+    if (!date) return "Tidak tersedia";
+
+    let d = new Date(date);
+    
+    let tanggal = d.toLocaleDateString("id-ID", { 
+        day: "numeric", 
+        month: "long", 
+        year: "numeric" 
+    });
+
+    let waktu = d.toLocaleTimeString("id-ID", { 
+        hour: "2-digit", 
+        minute: "2-digit", 
+        hour12: false 
+    });
+
+    return `${tanggal}, ${waktu}`;
+};
+
+let allAdoptions = []; // Simpan semua data adopsi untuk filtering
+$(document).ready(function () {
     getDataAdopsi();
+    // Event listener untuk input filter
+    $("#filterStartDate, #filterEndDate, #filterAnimal, #filterStatus").on("input change", function () {
+        filterTable();
+    });
 });
 
 function getDataAdopsi() {
     $.ajax({
-        url: "/adoptions",
+        url: "{{ url_for('admin.adoptions_list') }}",
         type: "GET",
+        headers: { "X-Requested-With": "XMLHttpRequest" }, // Tambahkan header agar Python tahu ini AJAX
         success: function(response) {
             if (response.success) {
-                showDataAdopsi(response.data);
+                allAdoptions = response.data;
+                showDataAdopsi(allAdoptions);
             } else {
-                showAlertMessage("Gagal mengambil data: " + response.message);
+                showAlertMessage("Gagal mengambil data: " + (response.message || "Terjadi kesalahan."));
             }
         },
         error: function(xhr) {
-            showAlertMessage("Terjadi kesalahan saat mengambil data.");
+            showAlertMessage("Terjadi kesalahan server.");
         }
     });
 }
@@ -95,17 +160,28 @@ function showDataAdopsi(adoptions) {
     let tableBody = $("#adoptionTable");
     tableBody.empty();
 
-    adoptions.forEach(adoption => {
+    adoptions.forEach((adoption, index) => {
         let adoptionId = adoption._id;
+        let adoptionDate = new Date(adoption.submitted_at.$date);
+        let adoptionStatusClass = adoption.status.toLowerCase() === "pending" ? "bg-warning text-dark" :
+            adoption.status.toLowerCase() === "approved" ? "bg-success text-white" :
+            "bg-danger text-white";
         if (adoptionId) {
-            let row = `<tr>
-                <td>${adoption.adopter.name}</td>
-                <td>${adoption.animal.name}</td>
-                <td>${adoption.status}</td>
-                <td>
-                    <a href="/adoption/${adoptionId}" class="btn btn-sm btn-primary">Detail</a>
-                </td>
-            </tr>`;
+            let row = `
+                <tr class="adoption-row"
+                    data-date="${adoptionDate.toISOString()}" 
+                    data-animal="${adoption.animal.name.toLowerCase()}" 
+                    data-status="${adoption.status.toLowerCase()}"
+                    onclick="window.location.href='/adoption/${adoptionId}'" style="cursor: pointer;">
+                    <td class="text-center">${index + 1}</td>
+                    <td>${adoption.adopter.name}</td>
+                    <td>${adoption.animal.name}</td>
+                    <td>${formatDate(adoption.submitted_at.$date)}</td>
+                    <td class="text-center">
+                        <span class="badge ${adoptionStatusClass}">${adoption.status}</span>
+                    </td>
+                </tr>
+            `;
             tableBody.append(row);
         } else {
             console.error("ID Adopsi tidak ditemukan atau invalid.");
@@ -146,6 +222,25 @@ function updateChart(pending, approved, rejected) {
     });
 }
 
+// Fungsi untuk filter tabel
+function filterTable() {
+    let filterStartDate = $("#filterStartDate").val() ? new Date($("#filterStartDate").val()) : null;
+    let filterEndDate = $("#filterEndDate").val() ? new Date($("#filterEndDate").val()) : null;    
+    let filterAnimal = $("#filterAnimal").val().toLowerCase();
+    let filterStatus = $("#filterStatus").val().toLowerCase();
+
+    $(".adoption-row").each(function () {
+        let adoptionDate = new Date($(this).data("date"));        
+        let animal = $(this).data("animal");
+        let status = $(this).data("status");
+        
+        let matchDate = (!filterStartDate || adoptionDate >= filterStartDate) && (!filterEndDate || adoptionDate <= filterEndDate);
+        let matchAnimal = animal.includes(filterAnimal);
+        let matchStatus = filterStatus === "" || status === filterStatus;
+
+        $(this).toggle(matchDate && matchAnimal && matchStatus);
+    });
+}
 
 </script>
 

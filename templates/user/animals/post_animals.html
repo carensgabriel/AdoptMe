@@ -1,0 +1,172 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+
+  /* .container label {
+    color: #aeaeae;
+  } */
+
+</style>
+
+<div class="container mt-4">
+  <div class="position-relative justify-content-center">
+    <a href="{{ url_for('user.user_profile') }}" class="position-absolute start-0 ms-3 text-dark top-50 translate-middle-y">
+      <i class="fas fa-chevron-left"></i>
+    </a>
+    <h2 class="m-0 text-center">{{ title }}</h2>
+  </div>
+
+  <form id="postAnimal-form" class="p-3 m-3 shadow-sm border rounded bg-light" enctype="multipart/form-data">
+    
+    <!-- Data Hewan -->
+    <h5>Informasi Hewan</h5>
+    <div class="form-floating mb-3">
+      <input type="text" id="namaHewan" name="namaHewan" class="form-control" placeholder="Nama Hewan" required>
+      <label for="namaHewan">Nama Hewan</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input type="text" id="breedHewan" name="breedHewan" class="form-control" placeholder="Jenis Hewan" required>
+      <label for="breedHewan">Jenis Hewan</label>
+    </div>
+    <div class="mb-3">
+      <label for="jkHewan" class="form-label">Jenis Kelamin</label>
+      <select id="jkHewan" name="jkHewan" class="form-control" required>
+        <option value="Jantan">Jantan</option>
+        <option value="Betina">Betina</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Tanggal Lahir</label>
+      <input type="date" id="datebirthHewan" name="datebirthHewan" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Foto Hewan</label>
+      <input type="file" id="fotoHewan" name="fotoHewan" class="form-control" accept="image/*" required>
+      <small class="text-muted">Format yang diperbolehkan: JPG, JPEG, PNG</small>
+    </div>
+    <div class="form-floating mb-3">
+      <textarea id="desc" name="desc" class="form-control" placeholder="Deskripsi" rows="3" required></textarea>
+      <label for="desc">Deskripsi</label>
+    </div>
+
+    <!-- Status Hewan -->
+    <h5>Status Hewan</h5>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="steril_status" name="steril_status" value="true">
+      <label for="steril_status" class="form-check-label">Sudah Steril</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="vaccine_status" name="vaccine_status" value="true">
+      <label for="vaccine_status" class="form-check-label">Sudah Vaksin</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="microchip_status" name="microchip_status" value="true">
+      <label for="microchip_status" class="form-check-label">Memiliki Microchip</label>
+    </div>
+
+    <hr>
+
+    <!-- Alamat -->
+    <h5>Alamat</h5>
+    <div class="form-floating mb-3">
+      <input type="text" id="street" name="street" class="form-control" placeholder="Jalan" required>
+      <label for="street">Alamat Lengkap</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" id="city" name="city" class="form-control" placeholder="Kota" required>
+      <label for="city">Kota/Kabupaten</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" id="province" name="province" class="form-control" placeholder="Provinsi" required>
+      <label for="province">Provinsi</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" id="postal_code" name="postal_code" class="form-control" placeholder="Kode Pos" required>
+      <label for="postal_code">Kode Pos</label>
+    </div>
+
+    <!-- Kontak Pemilik -->
+    <h5>Kontak Pemilik</h5>
+    <div class="form-floating mb-3">
+      <input type="text" id="namaPemilik" name="namaPemilik" class="form-control" placeholder="Nama Pemilik" required>
+      <label for="namaPemilik">Nama Pemilik Hewan</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input type="tel" id="noPemilik" name="noPemilik" class="form-control" placeholder="Nomor Telepon" required>
+      <label for="noPemilik">Nomor Telepon</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input type="email" id="emailPemilik" name="emailPemilik" class="form-control" placeholder="Email" required>
+      <label for="emailPemilik">Email</label>
+    </div>
+
+    <button type="submit" id="submitBtn" class="btn btn-primary w-100">Ajukan Posting Hewan</button>
+  </form>
+</div>
+
+<script>
+$("#postAnimal-form").on("submit", function (e) {
+  jQuery("#loading-screen").show();
+  e.preventDefault();
+
+  let formData = new FormData();
+  let jsonData = {};
+
+  // Loop otomatis untuk semua input & select di dalam form
+  $("#postAnimal-form").find("input, select, textarea")
+    .each(function () {
+        let field = $(this);
+        let name = field.attr("name");
+
+      if (field.attr("type") === "checkbox") {
+        jsonData[name] = field.is(":checked");
+      } else {
+        jsonData[name] = field.val();
+      }
+    });
+
+    // Konversi gambar ke Base64 jika ada file
+    let fileInput = $("#fotoHewan")[0].files[0];
+
+    if (fileInput) {
+      let reader = new FileReader();
+      reader.readAsDataURL(fileInput);
+      reader.onload = function () {
+        jsonData.fotoHewan = reader.result;
+        formData.append("data", JSON.stringify(jsonData));
+
+        uploadAnimals(formData);
+      };
+  } else {
+    showAlertMessage("Harap unggah foto hewan!");
+  }
+});
+
+// Fungsi AJAX terpisah untuk dipanggil setelah gambar dikonversi
+function uploadAnimals(formData) {
+  $.ajax({
+    url: "{{ url_for('user.post_animals') }}",
+    type: "POST",
+    processData: false,
+    contentType: false,
+    data: formData,
+    success: function (response) {
+      console.log(158, response);
+      jQuery("#loading-screen").hide();
+      showSuccessMessage(response.message);
+      $("#postAnimal-form")[0].reset();
+    },
+    error: function (error) {
+      jQuery("#loading-screen").hide();
+      showAlertMessage(error.responseJSON ? error.responseJSON.message : "Terjadi kesalahan.");
+    },
+  });
+}
+
+</script>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 {% extends "sidebar.html" %}
 {% block content %}
 
-<h2>Detail Adopsi</h2>
+<h2>Detail Pengajuan Adopsi</h2>
 <hr>
 
 <div class="container mt-4">
@@ -12,24 +12,29 @@
 
     <!-- Data Calon Adopter -->
     <h4>Data Calon Adopter</h4>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Nama</th>
-                <th>Tanggal Lahir</th>
-                <th>Telepon</th>
-                <th>Email</th>
-                <th>Pekerjaan</th>
-                <th>Alamat Lengkap</th>
-                <th>Tempat Tinggal</th>
-                <th>Alasan</th>
-                <th>Kontak Darurat</th>
-            </tr>
-        </thead>
-        <tbody id="adopterDetail">
-            <tr><td colspan="9" class="text-center">Memuat data...</td></tr>
-        </tbody>
-    </table>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Tanggal Lahir</th>
+                    <th>Telepon</th>
+                    <th>Email</th>
+                    <th>Pekerjaan</th>
+                    <th>Alamat Lengkap</th>
+                    <th>Tempat Tinggal</th>
+                    <th>Alasan</th>
+                    <th>Kontak Darurat</th>
+                </tr>
+            </thead>
+            <tbody id="adopterDetail">
+                <tr><td colspan="9" class="text-center">Memuat data...</td></tr>
+            </tbody>
+        </table>
+
+    <h4 class="mt-4">KTP Adopter</h4>
+    <div id="ktpContainer">
+        <p>Memuat KTP...</p>
+    </div>
 
     <!-- Data Hewan -->
     <h4 class="mt-4">Data Hewan</h4>
@@ -73,6 +78,8 @@
 
 <script>
 
+const formatDate = (date) => date ? new Date(date).toLocaleDateString("id-ID") : "Tidak tersedia";
+
 $(document).ready(function() {
     let adoptionId = "{{ adoption._id }}";  
     getAdoptionData(adoptionId);
@@ -95,9 +102,9 @@ function getAdoptionData(adoptionId) {
         success: function(response) {
             let adoption = response.data;
 
-            let adopterRow = `<tr>
+            let adopter = `<tr>
                 <td>${adoption.adopter.name}</td>
-                <td>${adoption.adopter.datebirth}</td>
+                <td>${formatDate(adoption.adopter.datebirth)}</td>
                 <td>${adoption.adopter.phone}</td>
                 <td>${adoption.adopter.email}</td>
                 <td>${adoption.adopter.occupation}</td>
@@ -106,17 +113,26 @@ function getAdoptionData(adoptionId) {
                 <td>${adoption.adopter.reason}</td>
                 <td>${adoption.emergency_contact.phone} (${adoption.emergency_contact.name})</td>
             </tr>`;
-            $("#adopterDetail").html(adopterRow);
+            $("#adopterDetail").html(adopter);
 
-            let animalRow = `<tr>
+            // Render KTP (Base64)
+            if (adoption.adopter.ktp_file) {
+                $("#ktpContainer").html(`
+                    <img src="${adoption.adopter.ktp_file}" alt="KTP Adopter" class="img-fluid rounded shadow" style="max-width: 400px;">
+                `);
+            } else {
+                $("#ktpContainer").html('<p class="text-muted">KTP tidak tersedia.</p>');
+            }
+
+            let animal = `<tr>
                 <td>${adoption.animal.name}</td>
                 <td>${adoption.animal.breed}</td>
                 <td>${adoption.animal.gender}</td>
             </tr>`;
-            $("#animalDetail").html(animalRow);
+            $("#animalDetail").html(animal);
         },
         error: function(xhr) {
-            showAlertMessage("Terjadi kesalahan.");
+            showAlertMessage("TTerjadi kesalahan server.");
         }
     });
 }

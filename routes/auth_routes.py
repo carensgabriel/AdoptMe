@@ -10,7 +10,7 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        return render_template("login.html", title="Login")
 
     if request.content_type != "application/json":
         return jsonify({"success": False, "message": "Content-Type harus application/json"}), 415
@@ -41,14 +41,14 @@ def login():
 def logout():
     session.clear()
     session.modified = True
-    return redirect(url_for("index"))
+    return redirect(url_for("auth.login"))
 
 # ============================================================ #
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
-        return render_template("register.html")
+        return render_template("register.html", title="Register")
 
     # Jika metode POST
     data = request.get_json()

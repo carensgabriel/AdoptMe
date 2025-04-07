@@ -1,0 +1,227 @@
+{% extends "sidebar.html" %}
+{% block content %}
+
+<style>
+    .table th {
+        text-align: center;
+    }
+</style>
+
+<div class="container">
+    <h2>Selamat Datang, {{ auth.username }}</h2>
+    <p>Data pengguna.</p>
+    <hr>
+
+    <h3>Daftar Pengguna</h3>
+
+    <!-- Filter Role -->
+    <div class="mb-3 d-flex align-items-center">
+        <label for="filterRole" class="me-2">Filter:</label>
+        <select id="filterRole" class="form-select w-auto">
+            <option value="">Semua Role</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+        </select>
+    </div>
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>No</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="usersTable">
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Edit User -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Edit Pengguna</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId">
+                    <div class="mb-3">
+                        <label for="editUsername" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="editUsername" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editRole" class="form-label">Role</label>
+                        <select class="form-control" id="editRole">
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function () {
+    renderDataUsers();
+    $("#filterRole").on("change", function () {
+        renderDataUsers();
+    });
+
+    $("#editUserForm").on("submit", function (e) {
+        e.preventDefault();
+        updateUser();
+    });
+});
+
+function renderDataUsers() {
+    $.ajax({
+        url: "{{ url_for('admin.users_list') }}",
+        type: "GET",
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+        success: function (response) {
+            if (response.success) {
+                getDataUser(response.data);
+            } else {
+                showAlertMessage("Gagal mengambil data pengguna.");
+            }
+        },
+        error: function () {
+            showAlertMessage("Terjadi kesalahan server.");
+        }
+    });
+}
+
+function getDataUser(users) {
+    let selectedRole = $("#filterRole").val(); // Ambil nilai filter
+    $("#usersTable").empty();
+
+    let filteredUsers = selectedRole ? users.filter(user => user.role === selectedRole) : users;
+
+    if (filteredUsers.length === 0) {
+        $("#usersTable").append(`<tr><td colspan="4" class="text-center">Tidak ada data pengguna.</td></tr>`);
+        return;
+    }
+
+    filteredUsers.forEach((user, index) => {
+        let row = `
+            <tr>
+                <td class="text-center">${index + 1}</td>
+                <td>${user.username}</td>
+                <td>${user.email}</td>
+                <td>${user.role}</td>
+                <td class="text-center">
+                    <button class="btn btn-warning btn-sm edit-btn"
+                        data-id="${user._id}"
+                        data-username="${user.username}"
+                        data-email="${user.email}"
+                        data-role="${user.role}">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="${user._id}">
+                        <i class="fas fa-trash"></i> Hapus
+                    </button>
+                </td>
+            </tr>
+        `;
+        $("#usersTable").append(row);
+    });
+
+    $(".edit-btn").on("click", handleEditUser);
+    $(".delete-btn").click(handleDeleteUser);
+}
+
+function handleEditUser() {
+    let userId = $(this).data("id");
+    let username = $(this).data("username");
+    let email = $(this).data("email");
+    let role = $(this).data("role");
+
+    $("#editUserId").val(userId);
+    $("#editUsername").val(username);
+    $("#editEmail").val(email);
+    $("#editRole").val(role);
+
+    $("#editUserModal").modal("show");
+}
+
+function updateUser() {
+    let userId = $("#editUserId").val();
+
+    $.ajax({
+        url: `/users/${userId}/edit`,
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify({
+            username: $("#editUsername").val(),
+            email: $("#editEmail").val(),
+            role: $("#editRole").val()
+        }),
+        success: function (response) {
+            if (response.success) {
+                showSuccessMessage("Data pengguna berhasil diperbarui!");
+                $("#editUserModal").modal("hide");
+                renderDataUsers(); // Reload tabel
+            } else {
+                showAlertMessage("Gagal memperbarui data pengguna!");
+            }
+        },
+        error: function (e) {
+            showAlertMessage("Terjadi kesalahan saat memperbarui data.");
+        }
+    });
+}
+
+// Fungsi untuk menghapus pengguna dengan SweetAlert2 konfirmasi
+function handleDeleteUser() {
+    let userId = $(this).data("id");
+
+    Swal.fire({
+        title: "Apakah Anda yakin?",
+        text: "Pengguna yang dihapus tidak dapat dikembalikan!",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Ya, hapus!",
+        cancelButtonText: "Batal"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/users/${userId}/delete`,
+                type: "DELETE",
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Terhapus!",
+                            text: "Pengguna berhasil dihapus.",
+                            icon: "success",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        renderDataUsers();
+                    } else {
+                        Swal.fire("Gagal!", "Pengguna gagal dihapus.", "error");
+                    }
+                },
+                error: function () {
+                    Swal.fire("Error!", "Terjadi kesalahan saat menghapus pengguna.", "error");
+                }
+            });
+        }
+    });
+}
+
+</script>
+
+{% endblock %}

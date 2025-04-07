@@ -85,7 +85,7 @@ def animal_details(animal_id):
             animal["_id"] = str(animal["_id"])
             return jsonify(animal)
 
-        return render_template("user/animals/details.html", animal_id=animal_id)
+        return render_template("user/animals/animal_details.html", title="Detail Hewan", animal_id=animal_id)
     
     except Exception as e:
         print(e)
@@ -101,7 +101,7 @@ def form_adopsi(animal_id):
         animal = mongo.db.animals.find_one({"_id": ObjectId(animal_id)})
         if not animal:
             return "Hewan tidak ditemukan", 404
-        return render_template("user/adopt/form_adopsi.html", animal=animal)
+        return render_template("user/adopt/form_adopsi.html", title="Form Adopsi", animal=animal)
     
     except Exception as e:
         print(e)

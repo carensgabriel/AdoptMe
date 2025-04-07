@@ -10,7 +10,12 @@
 </style>
 
 <div class="container mt-4">
-  <h2 class="text-center mb-4">Formulir Adopsi</h2>
+  <div class="position-relative justify-content-center">
+    <a href="{{ url_for('animal.animals') }}" class="position-absolute start-0 ms-3 text-dark top-50 translate-middle-y">
+      <i class="fas fa-chevron-left"></i>
+    </a>
+    <h2 class="m-0 text-center">{{ title }}</h2>
+  </div>
 
   <form id="adoption-form" class="p-3 m-3 shadow-sm border rounded bg-light">
     
@@ -111,8 +116,10 @@
       <label for="breedHewan">Jenis Keturunan</label>
     </div>
 
-    <p>Perika kembali data yang anda input.</p>
-    <button id="btn-next" type="button" class="btn btn-primary w-100 mt-3">Selanjutnya</button>
+    <div class="mt-5">
+      <button id="btn-next" type="button" class="btn btn-primary w-100">Selanjutnya</button>
+      <p>Perika kembali data yang anda input.</p>
+    </div>
 
   </form>
 </div>
@@ -146,30 +153,14 @@
   });
 
   document.getElementById("btn-next").addEventListener("click", function () {
+    jQuery("#loading-screen").hide();
+    let emptyFields = [];
     let form = document.getElementById("adoption-form");
     let formData = new FormData(form);
     let formObject = Object.fromEntries(formData.entries());
-    let emptyFields = [];
-
-    console.log("Form Object:", formObject); // Debugging
-
-    // Cek apakah ada field kosong
-    if (emptyFields.length) {
-        showAlertMessage('Semua field wajib diisi!');
-        return;
-    }
     
-    let fileInput = document.getElementById("uploadKTP");
-    let file = fileInput.files[0];
-    if (!file) {
-      showAlertMessage("Harap unggah foto atau scan KTP.");
-      return;
-    }
-
-    // Ambil data hewan
-    ["namaHewan", "jkHewan", "breedHewan"].forEach(id => {
-      formObject[id] = document.getElementById(id)?.value || "";
-    });
+    // Debugging
+    // console.log("Form Object:", formObject);
 
     // 🔹 **Validasi Input Kosong** (Prioritas utama)
     for (let key in formObject) {
@@ -185,6 +176,24 @@
 
         if (!value.trim()) emptyFields.push(key);
     }
+    
+    // Cek apakah ada field kosong
+    if (emptyFields.length) {
+        showAlertMessage("Semua field wajib diisi!");
+        return;
+    }
+    
+    let fileInput = document.getElementById("uploadKTP");
+    let file = fileInput.files[0];
+    if (!file) {
+      showAlertMessage("Harap unggah foto atau scan KTP.");
+      return;
+    }
+
+    // Ambil data hewan
+    ["namaHewan", "jkHewan", "breedHewan"].forEach(id => {
+      formObject[id] = document.getElementById(id)?.value || "";
+    });
 
     // 🔹 **Validasi Nomor Telepon (Hanya Angka)**
     let tel = formObject.telpAdopter?.trim() || "";

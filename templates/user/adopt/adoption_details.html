@@ -1,0 +1,172 @@
+{% extends "layout.html" %}
+{% block content %}  
+  
+<div class="container mt-4">
+    <!-- Status & Waktu Pengajuan -->
+    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <h4>Status: <span id="adoptionStatus" class="badge bg-secondary"></span></h4>
+        <p class="mb-0"><strong>Tanggal Pengajuan:</strong> <span id="submitDate"></span></p>
+        <p class="mb-0"><strong>Tanggal Kunjungan:</strong> <span id="visitDate">Tidak tersedia</span></p>
+        <button id="btnAturTglKunjungan" class="btn btn-warning mt-3" style="display: none;">
+            Atur Tanggal Kunjungan
+        </button>
+    </div>
+
+    <!-- Data Calon Adopter -->
+    <div style="border: 1px solid #007bff; background: #f0f8ff; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <h5 style="color: #007bff; font-weight: bold; margin-bottom: 10px;">Data Calon Adopter</h5>
+        <div id="adopterDetail">Memuat...</div>
+    </div>
+
+    <!-- Data Hewan -->
+    <div style="border: 1px solid #28a745; background: #f5fff5; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <h5 style="color: #28a745; font-weight: bold; margin-bottom: 10px;">Data Hewan</h5>
+        <div id="animalDetail">Memuat...</div>
+    </div>
+
+    <!-- Modal Atur Tanggal Kunjungan -->
+    <div class="modal fade" id="modalAturTglKunjungan" tabindex="-1" aria-labelledby="modalAturTglKunjunganLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAturTglKunjunganLabel">Atur Tanggal Kunjungan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="tglKunjungan" class="form-label"><strong>Pilih Tanggal:</strong></label>
+                    <input type="date" id="tglKunjungan" class="form-control">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button id="simpanTglKunjungan" class="btn btn-primary">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    // Fungsi untuk memformat tanggal dari "YYYY-MM-DD" ke "DD Month YYYY"
+    function formatDate(datebirth) {
+        if (!datebirth) return "-";
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const date = new Date(datebirth);
+        return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+    }
+
+    // Fungsi untuk menghitung umur dari tanggal lahir
+    function calculateAge(datebirth) {
+        if (!datebirth) return "-";
+
+        const birthDate = new Date(datebirth);
+        const today = new Date();
+
+        let years = today.getFullYear() - birthDate.getFullYear();
+        let monthsDiff = today.getMonth() - birthDate.getMonth();
+
+        if (today.getDate() < birthDate.getDate()) monthsDiff--;
+        if (monthsDiff < 0) { years--; monthsDiff += 12; }
+
+        return years > 0 ? `(${years} Tahun, ${monthsDiff} Bulan)` : `(${monthsDiff} Bulan)`;
+    }
+
+    let adoptionId = "{{ adoption_id }}";  // Ambil adoption_id dari Python
+    $(document).ready(function() {
+
+        $.ajax({
+            url: "{{ url_for('user.adoption_detail', adoption_id=adoption_id) }}",
+            type: "GET",
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+            success: function(response) {
+                if (response.success) {
+                    let adoption = response.adoption;
+                    let datebirth = new Date(adoption.animal.datebirth.$date);
+                    let adoptionStatusClass = adoption.status.toLowerCase() === "pending" ? "bg-warning text-dark" :
+                          adoption.status.toLowerCase() === "approved" ? "bg-success text-white" :
+                          "bg-danger text-white";
+
+                    $("#adoptionStatus").removeClass().addClass(`badge ${adoptionStatusClass} p-2`).text(adoption.status);
+                    $("#submitDate").text(adoption.submit_date);
+                    
+                    if (adoption.status.toLowerCase() === "approved") {
+                        if (adoption.visit_date) {
+                            $("#visitDate").text(adoption.visit_date);
+                        } else {
+                            $("#visitDate").text("Belum Pilih Tanggal Kunjungan").css("color", "red");
+                        }
+                        $("#aturTglKunjungan").show();
+                    } else {
+                        $("#visitDate").hide();
+                        $("#aturTglKunjungan").hide();
+                    }
+
+                    // Tampilkan data calon adopter
+                    $("#adopterDetail").html(`
+                        <p><strong>Nama:</strong> ${adoption.adopter.name}</p>
+                        <p><strong>Tanggal Lahir:</strong> ${formatDate(adoption.adopter.datebirth)}</p>
+                        <p><strong>Telepon:</strong> ${adoption.adopter.phone}</p>
+                        <p><strong>Email:</strong> ${adoption.adopter.email}</p>
+                        <p><strong>Pekerjaan:</strong> ${adoption.adopter.occupation}</p>
+                        <p><strong>Alamat:</strong> ${adoption.adopter.address}</p>
+                        <p><strong>Tempat Tinggal:</strong> ${adoption.adopter.residence}</p>
+                        <p><strong>Alasan Adopsi:</strong> ${adoption.adopter.reason}</p>
+                    `);
+
+                    // Tampilkan data lengkap hewan
+                    $("#animalDetail").html(`
+                        <div class="text-center">
+                            <img src="${adoption.animal.image}" class="img-fluid mb-3 rounded border" alt="Foto Hewan" style="width: 200px; height: auto; object-fit: cover;">
+                            </div>
+                        <p><strong>Nama:</strong><br> ${adoption.animal.name}</p>
+                        <p><strong>Breed:</strong><br> ${adoption.animal.breed}</p>
+                        <p><strong>Jenis Kelamin:</strong><br> ${adoption.animal.sex}</p>
+                        <p><strong>Tanggal Lahir:</strong><br> ${formatDate(datebirth)} ${calculateAge(datebirth)}</p>
+                        <p><strong>Deskripsi:</strong><br> ${adoption.animal.desc}</p>
+                    `);
+
+                    // Tampilkan opsi mengatur tanggal pengambilan jika statusnya "approved"
+                    if (adoption.status.toLowerCase() === "approved") {
+                        $("#btnAturTglKunjungan").show();
+                    }
+                } else {
+                    showAlertMessage(response.message);
+                }
+            },
+            error: function() {
+                showAlertMessage("Terjadi kesalahan server.");
+            }
+        });
+
+        $("#btnAturTglKunjungan").click(function() {
+            $("#modalAturTglKunjungan").modal("show");
+        });
+
+        $("#simpanTglKunjungan").click(function() {
+            if (!$("#tglKunjungan").val()) {
+                showAlertMessage("Pilih tanggal terlebih dahulu!");
+                return;
+            }
+
+            $.ajax({
+                url: "{{ url_for('user.tanggal_kunjungan') }}",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ 
+                    adoption_id: adoptionId,
+                    visit_date: $("#tglKunjungan").val()
+                }),
+                success: function(response) {
+                    showSuccessMessage(response.message);
+                },
+                error: function(error) {
+                    showAlertMessage("Gagal menyimpan tanggal kunjungan.");
+                }
+            });
+        });
+    });
+
+</script>
+
+{% endblock %}
