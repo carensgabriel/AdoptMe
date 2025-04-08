@@ -89,7 +89,7 @@
             success: function(response) {
                 if (response.success) {
                     let adoption = response.adoption;
-                    let datebirth = new Date(adoption.animal.datebirth);
+                    let datebirth = new Date(adoption.animal.datebirth.$date);
                     let adoptionStatusClass = adoption.status.toLowerCase() === "pending" ? "bg-warning text-dark" :
                           adoption.status.toLowerCase() === "approved" ? "bg-success text-white" :
                           "bg-danger text-white";

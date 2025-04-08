@@ -162,7 +162,7 @@ function showDataAdopsi(adoptions) {
 
     adoptions.forEach((adoption, index) => {
         let adoptionId = adoption._id;
-        let adoptionDate = new Date(adoption.submitted_at);
+        let adoptionDate = new Date(adoption.submitted_at.$date);
         let adoptionStatusClass = adoption.status.toLowerCase() === "pending" ? "bg-warning text-dark" :
             adoption.status.toLowerCase() === "approved" ? "bg-success text-white" :
             "bg-danger text-white";

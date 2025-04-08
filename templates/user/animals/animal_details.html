@@ -111,7 +111,7 @@
                 // Atur pengecualian untuk adoption_status
                 let adoptionStatusClass = animal.status.adoption_status ? "bg-danger" : "bg-success";
                 let adoptionStatusText = animal.status.adoption_status ? "Not Available" : "Available";
-                let datebirth = new Date(animal.datebirth);
+                let datebirth = new Date(animal.datebirth.$date);
 
                 $("#adoption-status").text(adoptionStatusText).addClass(adoptionStatusClass);                
                 $("#animal-image").attr("src", animal.image || "static/img/empty-adoption.png");

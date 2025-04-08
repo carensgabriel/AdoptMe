@@ -120,7 +120,7 @@ function getDataAnimals(animals) {
                 <td>${animal.name}</td>
                 <td>${animal.breed}</td>
                 <td>${animal.sex}</td>
-                <td>${formatDate(animal.datebirth)} ${calculateAge(animal.datebirth)}</td>
+                <td>${formatDate(animal.datebirth.$date)} ${calculateAge(animal.datebirth.$date)}</td>
             </tr>
         `;
         $("#animalsTable").append(row);
