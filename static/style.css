@@ -8,6 +8,21 @@
   background-color: #ffffff;
 }
 
+.custom-footer {
+    background-color: rgb(255, 149, 0);
+    color: white;
+    font-size: 0.9rem;
+    padding-bottom: 90px;
+}
+
+.custom-footer a:hover {
+    text-decoration: underline;
+}
+
+.custom-footer .social-icons a {
+    font-size: 1.2rem;
+}
+
 /** --------------- LOADING SCREEN --------------- */
 
 #loading-screen {
