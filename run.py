@@ -5,12 +5,14 @@ from routes.admin_routes import admin_bp
 from routes.animal_routes import animal_bp
 from database import mongo
 from dotenv import load_dotenv
+from datetime import timedelta
 import os
 
 load_dotenv()
 app = Flask(__name__)
-
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "fallback_secret_key")
+app.permanent_session_lifetime = timedelta(minutes=30)  # timeout = 30 menit
+
 MONGO_URI = os.getenv("MONGO_URI")
 if not MONGO_URI:
     raise ValueError("MONGO_URI tidak ditemukan! Pastikan variabel lingkungan sudah diatur.")

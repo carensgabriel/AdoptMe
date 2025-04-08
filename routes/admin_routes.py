@@ -1,12 +1,13 @@
 from bson import ObjectId
 from flask import Blueprint, render_template, redirect, url_for, jsonify, request, session
 from database import mongo
-from middleware import admin_required
+from middleware import admin_required, login_required
 
 admin_bp = Blueprint("admin", __name__)
 
 @admin_bp.route("/dashboard")
 @admin_required
+@login_required
 def dashboard():
 
     username = session.get('username', 'Admin')
@@ -18,6 +19,7 @@ def dashboard():
 
 @admin_bp.route("/adoption", methods=["GET"])
 @admin_required
+@login_required
 def adoptions_list():
     try:
         username = session.get('username', 'Admin')
@@ -41,6 +43,7 @@ def adoptions_list():
 
 @admin_bp.route("/adoption/<adoption_id>", methods=["GET"])
 @admin_required
+@login_required
 def adoption_detail(adoption_id):
     try:
         adoption = mongo.db.form_adoption.find_one({"_id": ObjectId(adoption_id)})
@@ -64,6 +67,7 @@ def adoption_detail(adoption_id):
 
 @admin_bp.route("/adoption/update_status", methods=["POST"])
 @admin_required
+@login_required
 def update_status():
     try:
         adoption_id = request.form['adoption_id']
@@ -85,6 +89,8 @@ def update_status():
 #* ========================= DATA HEWAN ========================= #
 
 @admin_bp.route("/animals-list", methods=["GET"])
+@admin_required
+@login_required
 def animals_list():
     if "X-Requested-With" in request.headers and request.headers["X-Requested-With"] == "XMLHttpRequest":
         try:
@@ -103,6 +109,8 @@ def animals_list():
     return render_template("admin/data_hewan.html", title="Data Hewan", auth={"username": username})
 
 @admin_bp.route("/animal-details/<animal_id>", methods=["GET"])
+@admin_required
+@login_required
 def animal_detail(animal_id):
     try:
         animal = mongo.db.animals.find_one({"_id": ObjectId(animal_id)})
@@ -124,6 +132,7 @@ def animal_detail(animal_id):
 # ! ========================= GET DATA USER =========================
 @admin_bp.route("/users-list", methods=["GET"])
 @admin_required
+@login_required
 def users_list():
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         try:
@@ -142,6 +151,8 @@ def users_list():
 
 # ! ========================= UPDATE USER =========================
 @admin_bp.route("/users/<user_id>/edit", methods=["PUT"])
+@admin_required
+@login_required
 def edit_user(user_id):
     try:
         data = request.json
@@ -156,6 +167,8 @@ def edit_user(user_id):
     
 # ! ========================= DELETE USER =========================
 @admin_bp.route("/users/<user_id>/delete", methods=["DELETE"])
+@admin_required
+@login_required
 def delete_user(user_id):
     try:
         result = mongo.db.users.delete_one({"_id": ObjectId(user_id)})

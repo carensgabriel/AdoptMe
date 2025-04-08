@@ -127,6 +127,7 @@ $(document).ready(function () {
 });
 
 function getDataAdopsi() {
+    jQuery("#loading-screen").show();
     $.ajax({
         url: "{{ url_for('admin.adoptions_list') }}",
         type: "GET",
@@ -138,14 +139,17 @@ function getDataAdopsi() {
             } else {
                 showAlertMessage("Gagal mengambil data: " + (response.message || "Terjadi kesalahan."));
             }
+            jQuery("#loading-screen").hide();
         },
         error: function(xhr) {
             showAlertMessage("Terjadi kesalahan server.");
+            jQuery("#loading-screen").hide();
         }
     });
 }
 
 function showDataAdopsi(adoptions) {
+    jQuery("#loading-screen").show();
     let totalAdopsi = adoptions.length;
     let pendingAdopsi = adoptions.filter(a => a.status === "Pending").length;
     let approvedAdopsi = adoptions.filter(a => a.status === "Approved").length;
@@ -183,8 +187,10 @@ function showDataAdopsi(adoptions) {
                 </tr>
             `;
             tableBody.append(row);
+            jQuery("#loading-screen").hide();
         } else {
             console.error("ID Adopsi tidak ditemukan atau invalid.");
+            jQuery("#loading-screen").hide();
         }
     });
 

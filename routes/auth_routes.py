@@ -25,6 +25,7 @@ def login():
     if not user or not check_password_hash(user["password"], password):
         return jsonify({"success": False, "message": "Username/email atau password salah."}), 400
 
+    session.permanent = True
     session["user_id"] = str(user["_id"])
     session["username"] = user["username"]
     session["email"] = user["email"]
