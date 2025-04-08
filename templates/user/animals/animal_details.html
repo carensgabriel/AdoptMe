@@ -2,6 +2,13 @@
 {% block content %}
 
 <div class="container p-5">
+    <div class="position-relative justify-content-center">
+        <a href="{{ url_for('animal.animals') }}" class="position-absolute start-0 ms-3 text-dark top-50 translate-middle-y">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <h2 class="mb-4 text-center">{{ title }}</h2>
+    </div>
+
     <div class="text-center">
         <img id="animal-image" class="img-fluid rounded border" style="width: 100%; max-width: 350px; height: auto; object-fit: cover;">
     </div>
@@ -79,6 +86,7 @@
 
     const animalId = "{{ animal_id }}";  // Ambil ID dari Python
     $(document).ready(function() {
+    jQuery("#loading-screen").show();
 
         $.ajax({
             url: `/details/${animalId}?format=json`,
@@ -103,7 +111,7 @@
                 // Atur pengecualian untuk adoption_status
                 let adoptionStatusClass = animal.status.adoption_status ? "bg-danger" : "bg-success";
                 let adoptionStatusText = animal.status.adoption_status ? "Not Available" : "Available";
-                let datebirth = new Date(animal.datebirth.$date);
+                let datebirth = new Date(animal.datebirth);
 
                 $("#adoption-status").text(adoptionStatusText).addClass(adoptionStatusClass);                
                 $("#animal-image").attr("src", animal.image || "static/img/empty-adoption.png");
@@ -131,6 +139,7 @@
                 $("#btn-adopt").attr("href", "/adopt/" + (animal._id || ""));
             },
             error: function (err) {
+                jQuery("#loading-screen").hide();
                 showAlertMessage("Gagal mengambil data.");
             }
         });

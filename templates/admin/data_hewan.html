@@ -90,7 +90,6 @@ function renderDataAnimals() {
         type: "GET",
         headers: { "X-Requested-With": "XMLHttpRequest" },
         success: function (response) {
-            console.log(response.data);
             if (response.success) {
                 getDataAnimals(response.data);
             } else {
@@ -121,7 +120,7 @@ function getDataAnimals(animals) {
                 <td>${animal.name}</td>
                 <td>${animal.breed}</td>
                 <td>${animal.sex}</td>
-                <td>${formatDate(animal.datebirth.$date)} ${calculateAge(animal.datebirth.$date)}</td>
+                <td>${formatDate(animal.datebirth)} ${calculateAge(animal.datebirth)}</td>
             </tr>
         `;
         $("#animalsTable").append(row);

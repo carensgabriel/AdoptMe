@@ -4,14 +4,14 @@
 <style>
     
     .chart-container {
-        width: 100%; /* Sesuaikan lebar */
-        max-width: 600px; /* Batas maksimal */
-        height: 300px; /* Tinggi tetap */
-        margin: auto; /* Pusatkan */
+        width: 100%;
+        max-width: 600px;
+        height: 300px;
+        margin: auto;
     }
     #adoptionChart {
-        width: 100% !important;
-        height: 100% !important;
+        width: 100%;
+        height: 100%;
     }
 
 </style>
@@ -111,7 +111,7 @@ const formatDate = (date) => {
     let waktu = d.toLocaleTimeString("id-ID", { 
         hour: "2-digit", 
         minute: "2-digit", 
-        hour12: false 
+        hour12: false
     });
 
     return `${tanggal}, ${waktu}`;
@@ -162,21 +162,21 @@ function showDataAdopsi(adoptions) {
 
     adoptions.forEach((adoption, index) => {
         let adoptionId = adoption._id;
-        let adoptionDate = new Date(adoption.submitted_at.$date);
+        let adoptionDate = new Date(adoption.submitted_at);
         let adoptionStatusClass = adoption.status.toLowerCase() === "pending" ? "bg-warning text-dark" :
             adoption.status.toLowerCase() === "approved" ? "bg-success text-white" :
             "bg-danger text-white";
         if (adoptionId) {
             let row = `
                 <tr class="adoption-row"
-                    data-date="${adoptionDate.toISOString()}" 
-                    data-animal="${adoption.animal.name.toLowerCase()}" 
+                    data-date="${formatDate(adoptionDate)}"
+                    data-animal="${adoption.animal.name.toLowerCase()}"
                     data-status="${adoption.status.toLowerCase()}"
                     onclick="window.location.href='/adoption/${adoptionId}'" style="cursor: pointer;">
                     <td class="text-center">${index + 1}</td>
                     <td>${adoption.adopter.name}</td>
                     <td>${adoption.animal.name}</td>
-                    <td>${formatDate(adoption.submitted_at.$date)}</td>
+                    <td>${formatDate(adoption.submitted_at)}</td>
                     <td class="text-center">
                         <span class="badge ${adoptionStatusClass}">${adoption.status}</span>
                     </td>
@@ -189,38 +189,38 @@ function showDataAdopsi(adoptions) {
     });
 
     // Perbarui grafik
-    updateChart(pendingAdopsi, approvedAdopsi, rejectedAdopsi);
+    // updateChart(pendingAdopsi, approvedAdopsi, rejectedAdopsi);
 }
 
-function updateChart(pending, approved, rejected) {
-    const ctx = document.getElementById("adoptionChart").getContext("2d");
+// function updateChart(pending, approved, rejected) {
+//     const ctx = document.getElementById("adoptionChart").getContext("2d");
 
-    // Hapus chart sebelumnya jika ada
-    if (window.myChart) {
-        window.myChart.destroy();
-    }
+//     // Hapus chart sebelumnya jika ada
+//     if (window.myChart) {
+//         window.myChart.destroy();
+//     }
 
-    // Buat chart baru
-    window.myChart = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-            labels: ["Pending", "Approved", "Rejected"],
-            datasets: [{
-                data: [pending, approved, rejected],
-                backgroundColor: ["#ffc107", "#28a745", "#dc3545"]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: "bottom"
-                }
-            }
-        }
-    });
-}
+//     // Buat chart baru
+//     window.myChart = new Chart(ctx, {
+//         type: "doughnut",
+//         data: {
+//             labels: ["Pending", "Approved", "Rejected"],
+//             datasets: [{
+//                 data: [pending, approved, rejected],
+//                 backgroundColor: ["#ffc107", "#28a745", "#dc3545"]
+//             }]
+//         },
+//         options: {
+//             responsive: true,
+//             maintainAspectRatio: false,
+//             plugins: {
+//                 legend: {
+//                     position: "bottom"
+//                 }
+//             }
+//         }
+//     });
+// }
 
 // Fungsi untuk filter tabel
 function filterTable() {

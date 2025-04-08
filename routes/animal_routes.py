@@ -43,21 +43,20 @@ def animals():
 @animal_bp.route("/get_animals", methods=["GET"])
 def get_animals():
     try:
-        species = request.args.get("species", "").strip()
-        location = request.args.get("location", "").strip()
-        shelter = request.args.get("shelter", "").strip()
-
         query = {}
 
-        if species:
-            query["species"] = species
+        breed = request.args.get("breed")
+        location = request.args.get("location")
+        shelter = request.args.get("shelter")
+
+        if breed:
+            query["breed"] = breed
         if location:
-            query["address.city"] = {"$regex": location, "$options": "i"}
+            query["address.city"] = location
         if shelter:
-            query["shelter_name"] = {"$regex": shelter, "$options": "i"}
+            query["contact.name"] = shelter
 
-        animals = list(mongo.db.animals.find(query, {"_id": 1, "name": 1, "contact.name": 1, "image": 1, "sex": 1, "address.city" : 1}))
-
+        animals = list(mongo.db.animals.find(query))
         for animal in animals:
             animal["_id"] = str(animal["_id"])
 
@@ -67,6 +66,31 @@ def get_animals():
         print(e)
         return jsonify({'message': 'Terjadi Kesalahan Server!'}), 500
 
+
+@animal_bp.route("/get_filter_options", methods=["GET"])
+def get_filter_options():
+    breed_set = set()
+    location_set = set()
+    shelter_set = set()
+
+    animals = mongo.db.animals.find()
+    for animal in animals:
+        breed = animal.get("breed")
+        city = animal.get("address", {}).get("city")
+        shelter = animal.get("contact", {}).get("name")
+
+        if breed:
+            breed_set.add(breed.strip())
+        if city:
+            location_set.add(city.strip())
+        if shelter:
+            shelter_set.add(shelter.strip())
+
+    return jsonify({
+        "breeds": sorted(breed_set),
+        "locations": sorted(location_set),
+        "shelters": sorted(shelter_set)
+    })
 
 # ============================================================ #
 

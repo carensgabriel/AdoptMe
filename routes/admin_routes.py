@@ -16,7 +16,6 @@ def dashboard():
 
 #* ========================= GET DATA ADOPSI ========================= #
 
-# ! GA RENDER KE [data_adopsi.html] LAGI, KALO BISAJADIIN SATU DENGAN DASHBOARD
 @admin_bp.route("/adoption", methods=["GET"])
 @admin_required
 def adoptions_list():

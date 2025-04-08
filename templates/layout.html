@@ -74,11 +74,11 @@
   <div class="main-container">
 
     <!-- * LOADING * -->
-    <div id="loading-screen">
-        <div class="loading-container">
-            <div class="spinner"></div>
-        </div>
+  <div id="loading-screen">
+    <div class="loading-container">
+      <img src="{{ url_for('static', filename='img/Logov2_bg.png') }}" alt="Loading Logo" class="loading-logo">
     </div>
+  </div>
 
     <!-- * HEADER * -->
     <header class="header-container">
@@ -190,10 +190,8 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            setTimeout(() => {
-                document.getElementById("loading-screen").style.display = "none";
-                document.getElementById("content").style.display = "block";
-            }, 1000);
+          document.getElementById("loading-screen").style.display = "none";
+          document.getElementById("content").style.display = "block";
         })
 
         function showAlert(message, type) {
