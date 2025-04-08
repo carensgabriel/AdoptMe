@@ -156,11 +156,9 @@
     <script>
 
         document.addEventListener("DOMContentLoaded", function () {
-            setTimeout(() => {
-                document.getElementById("loading-screen").style.display = "none";
-                document.getElementById("content").style.display = "block";
-            }, 1000);
-        })        
+            document.getElementById("loading-screen").style.display = "none";
+            document.getElementById("content").style.display = "block";
+        });
 
         function showAlert(message, type) {
           $("#alert-container").removeClass("d-none alert-success alert-danger").addClass(`alert alert-${type}`).html(message);
