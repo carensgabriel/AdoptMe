@@ -39,7 +39,7 @@
             position: fixed;
             width: 100%;
             height: 100%;
-            background-color: white;
+            background-color: rgba(108, 108, 108, 0.455);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -156,9 +156,11 @@
     <script>
 
         document.addEventListener("DOMContentLoaded", function () {
-            document.getElementById("loading-screen").style.display = "none";
-            document.getElementById("content").style.display = "block";
-        });
+            setTimeout(() => {
+                document.getElementById("loading-screen").style.display = "none";
+                document.getElementById("content").style.display = "block";
+            }, 500);
+        })
 
         function showAlert(message, type) {
           $("#alert-container").removeClass("d-none alert-success alert-danger").addClass(`alert alert-${type}`).html(message);
