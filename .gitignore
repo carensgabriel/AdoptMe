@@ -1,4 +1,15 @@
-.env
+# Python
 __pycache__/
 *.pyc
+env/
+venv/
+
+# Environment
+.env
+
+# Logs
+*.log
+
+# OS generated
 .DS_Store
+Thumbs.db
