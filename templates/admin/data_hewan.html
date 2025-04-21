@@ -63,7 +63,7 @@ const formatDate = (date) => {
 
 // Fungsi untuk menghitung umur dari tanggal lahir
 function calculateAge(datebirth) {
-  if (!datebirth) return "-";
+  if (!datebirth) return "";
 
   const birthDate = new Date(datebirth);
   const today = new Date();

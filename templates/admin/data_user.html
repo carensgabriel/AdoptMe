@@ -120,17 +120,17 @@ function getDataUser(users) {
                 <td class="text-center">${index + 1}</td>
                 <td>${user.username}</td>
                 <td>${user.email}</td>
-                <td>${user.role}</td>
+                <td class="text-center">${user.role}</td>
                 <td class="text-center">
                     <button class="btn btn-warning btn-sm edit-btn"
                         data-id="${user._id}"
                         data-username="${user.username}"
                         data-email="${user.email}"
                         data-role="${user.role}">
-                        <i class="fas fa-edit"></i> Edit
+                        <i class="fas fa-edit"></i>
                     </button>
                     <button class="btn btn-sm btn-danger delete-btn" data-id="${user._id}">
-                        <i class="fas fa-trash"></i> Hapus
+                        <i class="fas fa-trash"></i>
                     </button>
                 </td>
             </tr>
