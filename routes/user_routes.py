@@ -43,13 +43,20 @@ def formatDate(tanggal):
 def home():
     return render_template("home.html", title="Home")
 
+@user_bp.route("/article")
+def article():
+    return render_template("article.html", title="Artikel")
+
+@user_bp.route("/404")
+def under_dev():
+    return render_template("404.html", title="404")
+
 #* ==================== PROFILE ==================== #
 
 @user_bp.route("/profile")
 def user_profile():
     username = session.get('username', 'User')
     return render_template("user/user_profile.html", title="Profile", auth={'username': username})
-    # return render_template("404.html")
 
 #* ==================== SYARAT ADOPSI ==================== #
 
@@ -92,15 +99,16 @@ def submit_adoption():
         new_adoption = {
             "adopter": {
                 "name": data.get("namaAdopter", ""),
-                "datebirth": data.get("tglLahir", ""),
+                "datebirth": datetime.strptime(data.get("tglLahir", ""), "%Y-%m-%d"),
                 "phone": data.get("telpAdopter", ""),
                 "email": data.get("emailAdopter", ""),
                 "address": data.get("alamatAdopter", ""),
-                "occupation": data.get("pekerjaanAdopter", ""),
+                "occupation": data.get("pekerjaanLain", "") if data.get("pekerjaanAdopter") == "Other" else data.get("pekerjaanAdopter", ""),
                 "residence": data.get("tempatTinggalLain", "") if data.get("tempatTinggal") == "Other" else data.get("tempatTinggal", ""),
                 "reason": data.get("alasanAdopsi", ""),
                 "ktp_file": file_ktp
             },
+            "animal_id": ObjectId(data.get("idHewan", "")),
             "animal": {
                 "name": data.get("namaHewan", ""),
                 "breed": data.get("breedHewan", ""),
@@ -117,7 +125,7 @@ def submit_adoption():
                 "email": user["email"]
             }
         }
-
+        print("new_adoption", new_adoption)
         mongo.db.form_adoption.insert_one(new_adoption)
         return jsonify({"success": True, "message": "Formulir berhasil dikirim!"})
 

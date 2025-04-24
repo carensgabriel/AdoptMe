@@ -58,7 +58,6 @@
 <script>
 
   $("#syarat-form").on("submit", function (e) {
-    jQuery("#loading-screen").show();
     e.preventDefault();
 
     if (!$("#setuju").is(":checked")) {
@@ -67,6 +66,7 @@
     }
 
     let jsonData = localStorage.getItem("adoptionData");
+    console.log("jsonData", jsonData)
 
     if (!jsonData) {
         showAlertMessage("Data adopsi tidak ditemukan. Silakan isi formulir terlebih dahulu.");
@@ -85,18 +85,16 @@
     formData.append("uploadKTP", jsonData.uploadKTP);  // Kirim sebagai string Base64
 
     $.ajax({
-      url: "{{ url_for('user.submit_adoption') }}",      
+      url: "{{ url_for('user.submit_adoption') }}",
       type: "POST",
       processData: false,
       contentType: false,
       data: formData,
       success: function (response) {
-          jQuery("#loading-screen").hide();
           showSuccessMessage(response.message);
           localStorage.removeItem("adoptionData");
       },
       error: function (error) {
-          jQuery("#loading-screen").hide();
           showAlertMessage(error.responseJSON ? error.responseJSON.message : "Terjadi kesalahan.");
       }
     });

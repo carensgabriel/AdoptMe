@@ -7,6 +7,13 @@
 <div class="container mt-4">
     <h4>Status: <span id="adoptionStatus">{{ adoption.status }}</span></h4>
     <p><strong>Waktu Pengajuan:</strong> {{ adoption.submitted_at.strftime('%d-%m-%Y %H:%M:%S') }}</p>
+    <p><strong>Waktu Kunjungan:</strong> 
+        {% if adoption.visit_date %}
+            {{ adoption.visit_date.strftime('%d-%m-%Y') }}
+        {% else %}
+            Belum Tersedia
+        {% endif %}
+    </p>
 
     <button id="updateStatusBtn" class="btn btn-primary mb-4">Update Status</button>
 
@@ -96,10 +103,11 @@ $(document).ready(function() {
 
 function getAdoptionData(adoptionId) {
     $.ajax({
-        url: `/adoption/${adoptionId}`,
+        url: `/admin/adoption/${adoptionId}`,
         type: "GET",
         headers: { "X-Requested-With": "XMLHttpRequest" },
         success: function(response) {
+            console.log("response", response);
             let adoption = response.data;
 
             let adopter = `<tr>
@@ -132,7 +140,8 @@ function getAdoptionData(adoptionId) {
             $("#animalDetail").html(animal);
         },
         error: function(xhr) {
-            showAlertMessage("TTerjadi kesalahan server.");
+            console.log("Error:", xhr);
+            showAlertMessage("Terjadi kesalahan server."); 
         }
     });
 }

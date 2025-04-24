@@ -120,7 +120,7 @@ function showDataAdopsi(adoptions) {
                     data-date="${adoptionDate.toISOString()}" 
                     data-animal="${adoption.animal.name.toLowerCase()}" 
                     data-status="${adoption.status.toLowerCase()}"
-                    onclick="window.location.href='/adoption/${adoptionId}'" style="cursor: pointer;">
+                    onclick="window.location.href='/admin/adoption/${adoptionId}'" style="cursor: pointer;">
                     <td class="text-center">${index + 1}</td>
                     <td>${adoption.adopter.name}</td>
                     <td>${adoption.animal.name}</td>

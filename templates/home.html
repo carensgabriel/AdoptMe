@@ -14,12 +14,6 @@
     object-fit: cover;
   }
 
-  /* ARTICLE */
-  .article-container {
-    max-width: 500px;
-    margin: 0 auto;
-  }
-
   .text-left {
     text-align: left;
   }
@@ -49,6 +43,24 @@
   </button>
 </div>
 
+<!-- * Navigasi * -->
+<div class="container mt-4">
+  <div class="row justify-content-center text-center mb-3">
+    <div class="col-6 col-sm-3">
+      <a href="/animals" class="text-decoration-none text-dark">
+        <i class="fas fa-paw fa-2x mb-2"></i>
+        <div class="small fw-semibold">Animals</div>
+      </a>
+    </div>
+    <div class="col-6 col-sm-3">
+      <a href="/article" class="text-decoration-none text-dark">
+        <i class="fas fa-newspaper fa-2x mb-2"></i>
+        <div class="small fw-semibold">Article</div>
+      </a>
+    </div>
+  </div>
+</div>
+
 <!-- * Show Animals * -->
 <div class="container mt-4">
     <h2 class="text-center">Animals for Adopt</h2>
@@ -58,42 +70,43 @@
 </div>
 
 <!-- * Article * -->
-<div class="container article-container">
+<div class="container mt-4 p-3">
   <h2 class="text-center">Article for Adopt</h2>
 
-  <div class="row">
+  <div class="row justify-content-center">
 
-    <div class="col-12 col-sm-6 mb-4">
-      <div class="card ">
-          <img src="{{ url_for('static', filename='img/image.png') }}" class="card-img-top" alt="Gambar makanan sehat untuk anabul">
+    <!-- Card Artikel -->
+    <div class="col-12 col-md-10 mb-4">
+      <a href="#" class="card article-card text-decoration-none text-dark">
+        <img src="{{ url_for('static', filename='img/banner3.webp') }}"/>
         <div class="card-body">
-          <h5 class="card-title"> Tips n' Trick Memandikan Anabul </h5>
-          <p class="card-text"> Pelajari bagaimana memandikan anabul yang baik dan benar. </p>
-          <a href="#" class="btn btn-primary"> Baca Artikel </a>
+          <p class="text-muted small mb-1">Next Steps</p>
+          <h5 class="card-title mb-1">Take Your Next Step 👋</h5>
+          <p class="text-muted small">Posted on: 17 April 2025</p>
         </div>
-      </div>
+      </a>
     </div>
 
-    <div class="col-12 col-sm-6 mb-4">
-      <div class="card ">
-          <img src="{{ url_for('static', filename='img/image.png') }}" class="card-img-top" alt="Gambar makanan sehat untuk anabul">
+    <div class="col-12 col-md-10 mb-4">
+      <a href="#" class="card article-card text-decoration-none text-dark">
+        <img src="{{ url_for('static', filename='img/banner3.webp') }}"/>
         <div class="card-body">
-          <h5 class="card-title"> 5 Makanan Sehat untuk Anabul Kamu </h5>
-          <p class="card-text"> Makanan sehat dan bergizi untuk pertumbuhan anabul. </p>
-          <a href="#" class="btn btn-primary"> Baca Artikel </a>
+          <p class="text-muted small mb-1">Next Steps</p>
+          <h5 class="card-title mb-1">Take Your Next Step 👋</h5>
+          <p class="text-muted small">Posted on: 17 April 2025</p>
         </div>
-      </div>
+      </a>
     </div>
-
-    <div class="col-12 col-sm-6 mb-4">
-      <div class="card ">
-          <img src="{{ url_for('static', filename='img/image.png') }}" class="card-img-top" alt="Gambar makanan sehat untuk anabul">
+    
+    <div class="col-12 col-md-10 mb-4">
+      <a href="#" class="card article-card text-decoration-none text-dark">
+        <img src="{{ url_for('static', filename='img/banner3.webp') }}"/>
         <div class="card-body">
-          <h5 class="card-title"> Mengapa harus mengadopsi hewan? </h5>
-          <p class="card-text"> Pentingnya mengadopsi hewan. </p>
-          <a href="#" class="btn btn-primary"> Baca Artikel </a>
+          <p class="text-muted small mb-1">Next Steps</p>
+          <h5 class="card-title mb-1">Take Your Next Step 👋</h5>
+          <p class="text-muted small">Posted on: 17 April 2025</p>
         </div>
-      </div>
+      </a>
     </div>
 
   </div>
@@ -189,7 +202,7 @@
         });
       }
 
-      loadAnimals(); // Initial load
+      loadAnimals();
     });
 
 </script>

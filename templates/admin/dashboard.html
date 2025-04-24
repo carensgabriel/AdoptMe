@@ -133,7 +133,7 @@ function getDataAdopsi() {
     $.ajax({
         url: "{{ url_for('admin.adoptions_list') }}",
         type: "GET",
-        headers: { "X-Requested-With": "XMLHttpRequest" }, // Tambahkan header agar Python tahu ini AJAX
+        headers: { "X-Requested-With": "XMLHttpRequest" },
         success: function(response) {
             if (response.success) {
                 allAdoptions = response.data;
@@ -144,6 +144,7 @@ function getDataAdopsi() {
             jQuery("#loading-screen").hide();
         },
         error: function(xhr) {
+            console.log("Error:", xhr);
             showAlertMessage("Terjadi kesalahan server.");
             jQuery("#loading-screen").hide();
         }
@@ -167,8 +168,10 @@ function showDataAdopsi(adoptions) {
     tableBody.empty();
 
     adoptions.forEach((adoption, index) => {
+        console.log("adoption", adoption);
         let adoptionId = adoption._id;
-        let adoptionDate = new Date(adoption.submitted_at.$date);
+        // let adoptionDate = new Date(adoption.submitted_at.$date);
+        let adoptionDate = new Date(adoption.submitted_at);
         let adoptionStatusClass = adoption.status.toLowerCase() === "pending" ? "bg-warning text-dark" :
             adoption.status.toLowerCase() === "approved" ? "bg-success text-white" :
             "bg-danger text-white";
@@ -178,7 +181,7 @@ function showDataAdopsi(adoptions) {
                     data-date="${formatDate(adoptionDate)}"
                     data-animal="${adoption.animal.name.toLowerCase()}"
                     data-status="${adoption.status.toLowerCase()}"
-                    onclick="window.location.href='/adoption/${adoptionId}'" style="cursor: pointer;">
+                    onclick="window.location.href='/admin/adoption/${adoptionId}'" style="cursor: pointer;">
                     <td class="text-center">${index + 1}</td>
                     <td>${adoption.adopter.name}</td>
                     <td>${adoption.animal.name}</td>
@@ -238,7 +241,7 @@ function filterTable() {
     let filterStatus = $("#filterStatus").val().toLowerCase();
 
     $(".adoption-row").each(function () {
-        let adoptionDate = new Date($(this).data("date"));        
+        let adoptionDate = new Date($(this).data("date"));
         let animal = $(this).data("animal");
         let status = $(this).data("status");
         

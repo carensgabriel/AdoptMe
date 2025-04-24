@@ -1,10 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}  
   
-<div class="container mt-4">
+<div class="container mt-4 p-3">
+    <div class="position-relative justify-content-center">
+        <a href="{{ request.referrer or url_for('user.adoption_info') }}" class="position-absolute start-0 ms-3 text-dark top-50 translate-middle-y">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <h2 class="text-center">{{ title }}</h2>
+    </div>
+
     <!-- Status & Waktu Pengajuan -->
+    <h4>Status: <span id="adoptionStatus" class="badge bg-secondary"></span></h4>
     <div style="border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-        <h4>Status: <span id="adoptionStatus" class="badge bg-secondary"></span></h4>
         <p class="mb-0"><strong>Tanggal Pengajuan:</strong> <span id="submitDate"></span></p>
         <p class="mb-0"><strong>Tanggal Kunjungan:</strong> <span id="visitDate">Tidak tersedia</span></p>
         <button id="btnAturTglKunjungan" class="btn btn-warning mt-3" style="display: none;">

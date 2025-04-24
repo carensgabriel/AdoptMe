@@ -11,7 +11,7 @@
 
 <div class="container mt-4">
   <div class="position-relative justify-content-center">
-    <a href="{{ url_for('animal.animals') }}" class="position-absolute start-0 ms-3 text-dark top-50 translate-middle-y">
+    <a href="{{ request.referrer or url_for('animal.animal_details') }}" class="position-absolute start-0 ms-3 text-dark top-50 translate-middle-y">
       <i class="fas fa-chevron-left"></i>
     </a>
     <h2 class="m-0 text-center">{{ title }}</h2>
@@ -101,6 +101,7 @@
     <hr class="my-4">
     <h4 class="mb-3">Data Hewan yang Ingin Diadopsi</h4>
 
+    <input type="hidden" id="idHewan" value="{{ animal['_id'] }}">
     <div class="form-floating mb-3">
       <input type="text" class="form-control" id="namaHewan" value="{{ animal['name'] }}" readonly>
       <label for="namaHewan">Nama Hewan</label>
@@ -159,10 +160,9 @@
     let formData = new FormData(form);
     let formObject = Object.fromEntries(formData.entries());
     
-    // Debugging
-    // console.log("Form Object:", formObject);
+    console.log("isi formObject", formObject);
 
-    // 🔹 **Validasi Input Kosong** (Prioritas utama)
+    // **Validasi Input Kosong** (Prioritas utama)
     for (let key in formObject) {
         let value = formObject[key];
 
@@ -191,25 +191,25 @@
     }
 
     // Ambil data hewan
-    ["namaHewan", "jkHewan", "breedHewan"].forEach(id => {
+    ["idHewan", "namaHewan", "jkHewan", "breedHewan"].forEach(id => {
       formObject[id] = document.getElementById(id)?.value || "";
     });
 
-    // 🔹 **Validasi Nomor Telepon (Hanya Angka)**
+    // **Validasi Nomor Telepon (Hanya Angka)**
     let tel = formObject.telpAdopter?.trim() || "";
     if (!/^\d+$/.test(tel)) {
         showAlertMessage("Nomor telepon hanya boleh mengandung angka.");
         return;
     }
 
-    // 🔹 **Validasi Format Email**
+    // **Validasi Format Email**
     let email = formObject.emailAdopter?.trim() || "";
     if (!email.includes("@")) {
         showAlertMessage("Email tidak valid. Harus mengandung '@'.");
         return;
     }
 
-    // 🔹 **Validasi Upload KTP**
+    // **Validasi Upload KTP**
     let uploadKTP = document.getElementById("uploadKTP").files[0];
     if (!uploadKTP) {
         showAlertMessage("Anda harus mengunggah KTP.");

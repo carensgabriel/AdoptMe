@@ -1,11 +1,27 @@
 from bson import ObjectId
+from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, jsonify, request, session
 from database import mongo
 from middleware import admin_required, login_required
 
 admin_bp = Blueprint("admin", __name__)
 
-@admin_bp.route("/dashboard")
+def convert_for_json(data):
+    if isinstance(data, list):
+        return [convert_for_json(item) for item in data]
+    elif isinstance(data, dict):
+        return {
+            key: convert_for_json(value)
+            for key, value in data.items()
+        }
+    elif isinstance(data, ObjectId):
+        return str(data)
+    elif isinstance(data, datetime):
+        return data.isoformat()
+    else:
+        return data
+
+@admin_bp.route("/admin/dashboard")
 @admin_required
 @login_required
 def dashboard():
@@ -17,7 +33,7 @@ def dashboard():
 
 #* ========================= GET DATA ADOPSI ========================= #
 
-@admin_bp.route("/adoption", methods=["GET"])
+@admin_bp.route("/admin/adoption", methods=["GET"])
 @admin_required
 @login_required
 def adoptions_list():
@@ -28,10 +44,10 @@ def adoptions_list():
         for adoption in adoptions:
             adoption['_id'] = str(adoption['_id'])
 
+        adoptions = convert_for_json(adoptions)
+
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return jsonify({"success": True, "data": adoptions})
-        
-        # return render_template("admin/data_adopsi.html", adoptions=adoptions)
 
     except Exception as e:
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -41,7 +57,7 @@ def adoptions_list():
     
 #* ========================= GET DATA DETAIL ADOPSI ========================= #
 
-@admin_bp.route("/adoption/<adoption_id>", methods=["GET"])
+@admin_bp.route("/admin/adoption/<adoption_id>", methods=["GET"])
 @admin_required
 @login_required
 def adoption_detail(adoption_id):
@@ -56,16 +72,18 @@ def adoption_detail(adoption_id):
         adoption["emergency_contact"] = adoption.get("emergency_contact", {})
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            return jsonify({"success": True, "data": adoption})
+            adoption_json = convert_for_json(adoption)
+            return jsonify({"success": True, "data": adoption_json})
 
         return render_template("admin/adoption_details.html", title="Detail Adopsi", adoption=adoption)
 
     except Exception as e:
+        print("error:", e)
         return jsonify({"success": False, "message": str(e)}), 500
     
 #* ========================= UPDATE STATUS ADOPSI ========================= #
 
-@admin_bp.route("/adoption/update_status", methods=["POST"])
+@admin_bp.route("/admin/adoption/update_status", methods=["POST"])
 @admin_required
 @login_required
 def update_status():
@@ -88,7 +106,7 @@ def update_status():
     
 #* ========================= DATA HEWAN ========================= #
 
-@admin_bp.route("/animals-list", methods=["GET"])
+@admin_bp.route("/admin/animals-list", methods=["GET"])
 @admin_required
 @login_required
 def animals_list():
@@ -108,7 +126,7 @@ def animals_list():
     username = session.get("username", "Admin")
     return render_template("admin/data_hewan.html", title="Data Hewan", auth={"username": username})
 
-@admin_bp.route("/animal-details/<animal_id>", methods=["GET"])
+@admin_bp.route("/admin/animal-details/<animal_id>", methods=["GET"])
 @admin_required
 @login_required
 def animal_detail(animal_id):
@@ -130,7 +148,7 @@ def animal_detail(animal_id):
 #* ========================= DATA USER ========================= #
 
 # ! ========================= GET DATA USER =========================
-@admin_bp.route("/users-list", methods=["GET"])
+@admin_bp.route("/admin/users-list", methods=["GET"])
 @admin_required
 @login_required
 def users_list():
@@ -150,7 +168,7 @@ def users_list():
     return render_template("admin/data_user.html", title="Data User", auth={"username": username})
 
 # ! ========================= UPDATE USER =========================
-@admin_bp.route("/users/<user_id>/edit", methods=["PUT"])
+@admin_bp.route("/admin/users/<user_id>/edit", methods=["PUT"])
 @admin_required
 @login_required
 def edit_user(user_id):
@@ -166,7 +184,7 @@ def edit_user(user_id):
         return jsonify({"success": False, "message": str(e)}), 500
     
 # ! ========================= DELETE USER =========================
-@admin_bp.route("/users/<user_id>/delete", methods=["DELETE"])
+@admin_bp.route("/admin/users/<user_id>/delete", methods=["DELETE"])
 @admin_required
 @login_required
 def delete_user(user_id):

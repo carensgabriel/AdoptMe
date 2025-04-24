@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+.article-card {
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.article-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.article-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.article-card .card-body {
+  padding: 12px 16px;
+}
+
+.article-card .card-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+</style>
+
+<div class="container mt-4 p-3">
+  <!-- Header -->
+  <div class="position-relative justify-content-center">
+    <a href="{{ request.referrer or url_for('user.home') }}" class="position-absolute start-0 ms-3 text-dark top-50 translate-middle-y">
+      <i class="fas fa-chevron-left"></i>
+    </a>
+    <h2 class="text-center">{{ title }}</h2>
+  </div>
+
+  <!-- List Artikel -->
+  <div class="d-flex flex-column gap-3 m-3">
+    <!-- Filter -->
+    <!-- <div class="d-flex justify-content-between align-items-center mb-3">
+      <p class="fw-bold mb-0">All Categories</p>
+      <i class="fas fa-sliders-h"></i>
+    </div> -->
+
+    <!-- Card Artikel -->
+    <a href="/404" class="card article-card shadow-sm text-decoration-none text-dark">
+      <img src="{{ url_for('static', filename='img/no_img.png') }}" class="card-img-top rounded-top" alt="Banner Artikel">
+      <div class="card-body">
+        <p class="text-muted small mb-1">News & Announcements</p>
+        <h5 class="card-title">Experience DATE! 😊</h5>
+        <p class="text-muted small mb-0">Posted on: 08 April 2025</p>
+      </div>
+    </a>
+
+    <!-- Card Artikel -->
+    <a href="/404" class="card article-card shadow-sm text-decoration-none text-dark">
+      <img src="{{ url_for('static', filename='img/no_img.png') }}" class="card-img-top rounded-top" alt="Banner Artikel">
+      <div class="card-body">
+        <p class="text-muted small mb-1">Next Steps</p>
+        <h5 class="card-title">Take Your Next Step 👋</h5>
+        <p class="text-muted small mb-0">Posted on: 17 April 2025</p>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+{% endblock %}
