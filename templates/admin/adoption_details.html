@@ -162,7 +162,7 @@ function updateAdoptionStatus(adoptionId) {
     });
 
     $.ajax({
-        url: "/adoption/update_status",
+        url: "{{ url_for('admin.update_status') }}",
         type: "POST",
         data: {
             adoption_id: adoptionId,
