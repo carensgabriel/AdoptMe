@@ -71,7 +71,7 @@
             <input type="text" id="filterAnimal" class="form-control" placeholder="Cari Nama Hewan">
         </div>
         <div class="col-sm-3">
-            <select id="filterStatus" class="form-control">
+            <select id="filterStatus" class="form-select">
                 <option value="">Semua Status</option>
                 <option value="Pending">Pending</option>
                 <option value="Approved">Approved</option>
@@ -87,6 +87,7 @@
                 <th>Nama Adopter</th>
                 <th>Nama Hewan</th>
                 <th>Tanggal Pengajuan</th>
+                <th>Tanggal Kunjungan</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -168,10 +169,10 @@ function showDataAdopsi(adoptions) {
     tableBody.empty();
 
     adoptions.forEach((adoption, index) => {
-        console.log("adoption", adoption);
         let adoptionId = adoption._id;
         // let adoptionDate = new Date(adoption.submitted_at.$date);
-        let adoptionDate = new Date(adoption.submitted_at);
+        let adoptionDate = new Date(adoption.submission_date);
+        let visitDate = new Date(adoption.visit_date);
         let adoptionStatusClass = adoption.status.toLowerCase() === "pending" ? "bg-warning text-dark" :
             adoption.status.toLowerCase() === "approved" ? "bg-success text-white" :
             "bg-danger text-white";
@@ -186,6 +187,7 @@ function showDataAdopsi(adoptions) {
                     <td>${adoption.adopter.name}</td>
                     <td>${adoption.animal.name}</td>
                     <td>${formatDate(adoptionDate)}</td>
+                    <td>${formatDate(visitDate)}</td>
                     <td class="text-center">
                         <span class="badge ${adoptionStatusClass}">${adoption.status}</span>
                     </td>

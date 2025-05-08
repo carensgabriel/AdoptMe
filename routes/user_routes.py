@@ -119,13 +119,12 @@ def submit_adoption():
                 "phone": data.get("telpDarurat", "")
             },
             "status": "Pending",
-            "submitted_at": datetime.now(),
+            "submission_date": datetime.now(),
             "user": {
                 "name": user["name"],
                 "email": user["email"]
             }
         }
-        print("new_adoption", new_adoption)
         mongo.db.form_adoption.insert_one(new_adoption)
         return jsonify({"success": True, "message": "Formulir berhasil dikirim!"})
 
@@ -155,7 +154,7 @@ def adoption_info():
                         "name": animal_info["name"] if animal_info else "Tidak tersedia",
                         "image": animal_info["image"] if animal_info and "image" in animal_info else "static/img/default-animal.jpg"
                     },
-                    "submit_date": adoption["submitted_at"].strftime("%d-%m-%Y") if "submitted_at" in adoption else "Tidak tersedia",
+                    "submit_date": adoption["submission_date"].strftime("%d-%m-%Y") if "submission_date" in adoption else "Tidak tersedia",
                     "visit_date": adoption["visit_date"].strftime("%d-%m-%Y") if "visit_date" in adoption else "Tidak tersedia",
                     "status": adoption.get("status", "Pending")
                 })
@@ -205,7 +204,7 @@ def adoption_detail(adoption_id):
                 "desc": animal.get("desc", ""),
             },
             "status": adoption["status"],
-            "submit_date": formatDate(adoption.get("submitted_at")),
+            "submit_date": formatDate(adoption.get("submission_date")),
             "visit_date": formatDate(adoption.get("visit_date"))
         }
         # print(178, adoption_data)
@@ -231,14 +230,14 @@ def tanggal_kunjungan():
             return jsonify({"success": False, "message": "Data tidak lengkap."}), 400
 
         # Konversi string menjadi format DateTime
-        visit_date = datetime.strptime(visit_date, "%Y-%m-%d")  
+        visit_date = datetime.strptime(visit_date, "%Y-%m-%d")
 
         mongo.db.form_adoption.update_one(
             {"_id": ObjectId(adoption_id)},
             {"$set": {"visit_date": visit_date}}
         )
 
-        return jsonify({"success": True, "message": "Tanggal pengambilan berhasil disimpan."})
+        return jsonify({"success": True, "message": "Tanggal kunjungan berhasil disimpan."})
 
     except ValueError:
         return jsonify({"success": False, "message": "Format tanggal tidak valid. Gunakan YYYY-MM-DD."}), 400

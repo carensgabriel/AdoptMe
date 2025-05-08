@@ -6,14 +6,8 @@
 
 <div class="container mt-4">
     <h4>Status: <span id="adoptionStatus">{{ adoption.status }}</span></h4>
-    <p><strong>Waktu Pengajuan:</strong> {{ adoption.submitted_at.strftime('%d-%m-%Y %H:%M:%S') }}</p>
-    <p><strong>Waktu Kunjungan:</strong> 
-        {% if adoption.visit_date %}
-            {{ adoption.visit_date.strftime('%d-%m-%Y') }}
-        {% else %}
-            Belum Tersedia
-        {% endif %}
-    </p>
+    <p class="mb-1"><strong>Tanggal Pengajuan:</strong> <span id="submitDate">Memuat...</span></p>
+    <p class="mb-1"><strong>Tanggal Kunjungan:</strong> <span id="visitDate">Memuat...</span></p>
 
     <button id="updateStatusBtn" class="btn btn-primary mb-4">Update Status</button>
 
@@ -87,6 +81,26 @@
 
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("id-ID") : "Tidak tersedia";
 
+const formatDateVisit = (date) => {
+    if (!date) return "Tidak tersedia";
+
+    let d = new Date(date);
+    
+    let tanggal = d.toLocaleDateString("id-ID", { 
+        day: "numeric", 
+        month: "long", 
+        year: "numeric" 
+    });
+
+    let waktu = d.toLocaleTimeString("id-ID", { 
+        hour: "2-digit", 
+        minute: "2-digit", 
+        hour12: false
+    });
+
+    return `${tanggal}, ${waktu}`;
+};
+
 $(document).ready(function() {
     let adoptionId = "{{ adoption._id }}";  
     getAdoptionData(adoptionId);
@@ -100,15 +114,16 @@ $(document).ready(function() {
     });
 });
 
-
 function getAdoptionData(adoptionId) {
     $.ajax({
         url: `/admin/adoption/${adoptionId}`,
         type: "GET",
         headers: { "X-Requested-With": "XMLHttpRequest" },
         success: function(response) {
-            console.log("response", response);
             let adoption = response.data;
+            
+            $("#submitDate").text(formatDateVisit(adoption.submission_date));
+            $("#visitDate").text(formatDateVisit(adoption.visit_date));
 
             let adopter = `<tr>
                 <td>${adoption.adopter.name}</td>
