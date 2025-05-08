@@ -106,14 +106,14 @@ const formatDate = (date) => {
     let d = new Date(date);
     
     let tanggal = d.toLocaleDateString("id-ID", { 
-        day: "numeric", 
-        month: "long", 
-        year: "numeric" 
+        day: "numeric",
+        month: "long",
+        year: "numeric"
     });
 
     let waktu = d.toLocaleTimeString("id-ID", { 
-        hour: "2-digit", 
-        minute: "2-digit", 
+        hour: "2-digit",
+        minute: "2-digit",
         hour12: false
     });
 
@@ -176,6 +176,14 @@ function showDataAdopsi(adoptions) {
         let adoptionStatusClass = adoption.status.toLowerCase() === "pending" ? "bg-warning text-dark" :
             adoption.status.toLowerCase() === "approved" ? "bg-success text-white" :
             "bg-danger text-white";
+
+        console.log(adoption)
+        // if (visit_date == "Tidak tersedia") {
+        //     $("#visitDate").text("Silakan Pilih Tanggal Kunjungan").css("color", "red");
+        // } else {
+        //     $("#visitDate").text(formatDateVisit(adoption.visit_date.$date));
+        // }
+
         if (adoptionId) {
             let row = `
                 <tr class="adoption-row"
