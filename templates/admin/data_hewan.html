@@ -24,9 +24,9 @@
     <div class="mb-3 d-flex align-items-center">
         <label for="filterStatus" class="me-2">Filter:</label>
         <select id="filterStatus" class="form-select w-auto">
-            <option value="">Semua</option>
-            <option value="false">Tersedia</option>
-            <option value="true">Diadopsi</option>
+            <option value="">Semua Status</option>
+            <option value="false">Belum diadopsi</option>
+            <option value="true">Sudah diadopsi</option>
         </select>
     </div>
 
@@ -38,7 +38,8 @@
                 <th>Nama Hewan</th>
                 <th>Breed</th>
                 <th>Jenis Kelamin</th>
-                <th>Tanggal Lahir</th>
+                <th>Umur</th>
+                <th>Status Adopsi</th>
             </tr>
         </thead>
         <tbody id="animalsTable">
@@ -78,6 +79,7 @@ function calculateAge(datebirth) {
 }
 
 $(document).ready(function () {
+    jQuery("#loading-screen").show();
     renderDataAnimals();
     $("#filterStatus").on("change", function () {
         renderDataAnimals();
@@ -95,9 +97,11 @@ function renderDataAnimals() {
             } else {
                 showAlertMessage("Gagal mengambil data hewan.");
             }
+            jQuery("#loading-screen").hide();
         },
         error: function () {
             showAlertMessage("Terjadi kesalahan server.");
+            jQuery("#loading-screen").hide();
         }
     });
 }
@@ -108,19 +112,25 @@ function getDataAnimals(animals) {
     $("#animalsTable").empty();
 
     if (filteredAnimals.length === 0) {
-        $("#animalsTable").append(`<tr><td colspan="6" class="text-center">Tidak ada data hewan.</td></tr>`);
+        $("#animalsTable").append(`<tr><td colspan="7" class="text-center">Tidak ada data hewan.</td></tr>`);
         return;
     }
 
     filteredAnimals.forEach((animal, index) => {
+        let adoptionStatusClass = animal.status.adoption_status ? "bg-success text-white" : "bg-secondary text-white";
+        let adoptionStatusText = animal.status.adoption_status ? "Sudah diadopsi" : "Belum diadopsi";
+        
         let row = `
-        <tr onclick="window.location.href='/animals/${animal._id}'" style="cursor: pointer;">
+            <tr onclick="window.location.href='/admin/animal-details/${animal._id}'" style="cursor: pointer;">
                 <td class="text-center">${index + 1}</td>
                 <td class="text-center"><img src="${animal.image}" alt="Gambar ${animal.name}" class="animal-img"></td>
                 <td>${animal.name}</td>
                 <td>${animal.breed}</td>
                 <td>${animal.sex}</td>
                 <td>${formatDate(animal.datebirth.$date)} ${calculateAge(animal.datebirth.$date)}</td>
+                <td class="text-center">
+                    <span class="badge ${adoptionStatusClass}">${adoptionStatusText}</span>
+                </td>
             </tr>
         `;
         $("#animalsTable").append(row);

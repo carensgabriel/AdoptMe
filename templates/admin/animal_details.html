@@ -1,0 +1,290 @@
+{% extends "sidebar.html" %}
+{% block content %}
+
+  <h2>Detail Hewan</h2>
+  <hr>
+
+  <div class="container mt-4">
+    
+    
+    <form id="animalForm">
+      <div class="row g-4 align-items-start">
+      <!-- Gambar -->
+        <div class="col-md-4">
+          <div id="animalImage" class="mb-3">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Memuat Gambar...</span>
+            </div>
+          </div>
+
+          <button type="button" id="editBtn" class="btn btn-primary mb-3">Edit Data Hewan</button>
+          <button type="button" id="saveBtn" class="btn btn-success mb-3 d-none">Simpan Perubahan</button>
+          <button type="button" id="cancelBtn" class="btn btn-secondary mb-3 d-none">Batal</button>
+          
+          <div class="card shadow-sm mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Status Hewan</h5>
+
+              <div class="form-floating mb-3">
+                <select class="form-select" id="adoptionStatus" name="adoptionStatus" disabled>
+                  <option value="false">Belum Diadopsi</option>
+                  <option value="true">Sudah Diadopsi</option>
+                </select>
+                <label for="adoptionStatus">Status Adopsi</label>
+              </div>            
+              
+              <div class="form-floating mb-3">
+                <select class="form-select" id="sterilStatus" name="sterilStatus" disabled>
+                  <option value="true">Sudah Steril</option>
+                  <option value="false">Belum Steril</option>
+                </select>
+                <label for="sterilStatus">Steril</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <select class="form-select" id="vaccineStatus" name="vaccineStatus" disabled>
+                  <option value="true">Sudah Vaksin</option>
+                  <option value="false">Belum Vaksin</option>
+                </select>
+                <label for="vaccineStatus">Vaksin</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <select class="form-select" id="microchipStatus" name="microchipStatus" disabled>
+                  <option value="true">Sudah Microchip</option>
+                  <option value="false">Belum Microchip</option>
+                </select>
+                <label for="microchipStatus">Microchip</label>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Info detail di sebelah kanan gambar -->
+        <div class="col-md-8">
+
+          <div class="card shadow-sm mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Informasi Hewan</h5>
+
+              <!-- Informasi Hewan -->
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="animalName" name="animalName" placeholder="Nama" readonly>
+                <label for="animalName">Nama</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="animalBreed" name="animalBreed" placeholder="Ras" readonly>
+                <label for="animalBreed">Ras</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="animalSex" name="animalSex" placeholder="Jenis Kelamin" readonly>
+                <label for="animalSex">Jenis Kelamin</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="date" class="form-control" id="animalDate" name="animalDate" placeholder="Tanggal Lahir" readonly>
+                <label for="animalDate">Tanggal Lahir</label>
+              </div>
+
+              <!-- Alamat -->
+              <h5 class="mt-4">Alamat</h5>
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="animalStreet" name="animalStreet" placeholder="Jalan" readonly>
+                <label for="animalStreet">Jalan</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="animalCity" name="animalCity" placeholder="Kota" readonly>
+                <label for="animalCity">Kota</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="animalProvince" name="animalProvince" placeholder="Provinsi" readonly>
+                <label for="animalProvince">Provinsi</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="animalPostalCode" name="animalPostalCode" placeholder="Kode Pos" readonly>
+                <label for="animalPostalCode">Kode Pos</label>
+              </div>
+
+              <!-- Kontak -->
+              <h5 class="mt-4">Kontak</h5>
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="animalContactName" name="animalContactName" placeholder="Nama Kontak" readonly>
+                <label for="animalContactName">Nama Kontak</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="animalContactPhone" name="animalContactPhone" placeholder="No. Telp Kontak" readonly>
+                <label for="animalContactPhone">No. Telp Kontak</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="animalContactEmail" name="animalContactEmail" placeholder="Email Kontak" readonly>
+                <label for="animalContactEmail">Email Kontak</label>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="card shadow-sm mt-4">
+            <div class="card-body">
+              <h5 class="card-title">Deskripsi</h5>
+              <div class="form">
+                <textarea class="form-control" id="animalDesc" name="animalDesc" placeholder="Deskripsi" style="height: 120px;" readonly></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+
+  <script>
+    const formatDate = (date) => {
+      return date ? new Date(date).toISOString().split('T')[0] : null;
+    };
+
+    $(document).ready(function() {
+      let animalId = "{{ animal._id }}";
+      let initialFormState = "";
+
+      getAnimalData(animalId);
+    });
+
+    // <!-- * GET ANIMAL DATA *  -->
+    function getAnimalData(animalId) {
+      $.ajax({
+        url: `/admin/animal-details/${animalId}`,
+        type: "GET",
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+        success: function(response) {
+          let animal = response;
+
+          $("#animalImage").html(`
+            <img src="${animal.image}" alt="Gambar ${animal.name}" class="img-fluid rounded shadow">
+          `);
+
+          initialStatus = {
+            steril_status: animal.status.steril_status,
+            vaccine_status: animal.status.vaccine_status,
+            microchip_status: animal.status.microchip_status,
+            adoption_status: animal.status.adoption_status
+          };
+
+          // Set value ke dropdown
+          $("#sterilStatus").val(animal.status.steril_status.toString());
+          $("#vaccineStatus").val(animal.status.vaccine_status.toString());
+          $("#microchipStatus").val(animal.status.microchip_status.toString());
+          $("#adoptionStatus").val(animal.status.adoption_status.toString());
+
+          $("#animalName").val(animal.name);
+          $("#animalBreed").val(animal.breed);
+          $("#animalSex").val(animal.sex);
+          $("#animalDate").val(formatDate(animal.datebirth.$date));
+          $("#animalStreet").val(animal.address.street);
+          $("#animalCity").val(animal.address.city);
+          $("#animalProvince").val(animal.address.province);
+          $("#animalPostalCode").val(animal.address.postal_code);
+          $("#animalContactName").val(animal.contact.name);
+          $("#animalContactPhone").val(animal.contact.phone);
+          $("#animalContactEmail").val(animal.contact.email);
+          $("#animalDesc").val(animal.desc);
+          
+          saveInitialFormState();
+        },
+        error: function(xhr) {
+          console.log("Error:", xhr);
+          $("#animalImage").html('<p class="text-danger">Gagal memuat gambar.</p>');
+          $("#animalDesc").text("Gagal memuat deskripsi.");
+        }
+      });
+    }
+
+    function saveInitialFormState() {
+      initialFormState = $("#animalForm").serializeArray();
+    }
+
+    // <!-- * EDIT ANIMAL DATA *  -->
+    $("#editBtn").click(function() {
+      $("input.form-control, textarea.form-control, select.form-select").prop("readonly", false);
+      $("select.form-select").prop("disabled", false);
+      $(this).addClass("d-none");
+      $("#saveBtn, #cancelBtn").removeClass("d-none");
+    });
+
+    $("#cancelBtn").click(function() {
+      initialFormState.forEach(function(item) {
+        $(`[name="${item.name}"]`).val(item.value);
+      });
+
+      $("#sterilStatus").val(initialStatus.steril_status.toString());
+      $("#vaccineStatus").val(initialStatus.vaccine_status.toString());
+      $("#microchipStatus").val(initialStatus.microchip_status.toString());
+      $("#adoptionStatus").val(initialStatus.adoption_status.toString());
+      
+      $("input.form-control, textarea.form-control, select.form-select").prop("readonly", false);
+      $("select.form-select").prop("disabled", true);
+      $("#editBtn").removeClass("d-none");
+      $("#saveBtn, #cancelBtn").addClass("d-none");
+    });
+
+    $("#saveBtn").click(function() {
+      let animalId = "{{ animal._id }}";
+      let animalDate = new Date($("#animalDate").val());
+      let updatedData = {
+        name: $("#animalName").val(),
+        breed: $("#animalBreed").val(),
+        sex: $("#animalSex").val(),
+        datebirth: animalDate,
+        desc: $("#animalDesc").val(),
+        address: {
+          street: $("#animalStreet").val(),
+          city: $("#animalCity").val(),
+          province: $("#animalProvince").val(),
+          postal_code: $("#animalPostalCode").val()
+        },
+        contact: {
+          name: $("#animalContactName").val(),
+          phone: $("#animalContactPhone").val(),
+          email: $("#animalContactEmail").val()
+        },
+        status: {
+          steril_status: $("#sterilStatus").val() === "true",
+          vaccine_status: $("#vaccineStatus").val() === "true",
+          microchip_status: $("#microchipStatus").val() === "true",
+          adoption_status: $("#adoptionStatus").val() === "true"
+        }
+      };
+
+      $.ajax({
+        url: `/admin/animal-update/${animalId}`,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(updatedData),
+        success: function(response) {
+          showSuccessMessage("Data berhasil disimpan!");
+          $("input.form-control, textarea.form-control, select.form-select").prop("readonly", true);
+          $("select.form-select").prop("disabled", true);
+          $("#editBtn").removeClass("d-none");
+          $("#saveBtn, #cancelBtn").addClass("d-none");
+
+          saveInitialFormState();
+        },
+        error: function(xhr) {
+          console.log("Error:", xhr);
+          showAlertMessage("Gagal menyimpan data.");
+        }
+      });
+    });
+
+  </script>
+
+{% endblock %}

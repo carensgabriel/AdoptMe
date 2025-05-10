@@ -16,26 +16,26 @@ bulan_indonesia = {
     "October": "Oktober", "November": "November", "December": "Desember"
 }
 
-def formatDate(tanggal):
-    """
-    Mengubah format datetime ke format 'DD Bulan YYYY' dalam bahasa Indonesia.
+# def formatDate(tanggal):
+#     """
+#     Mengubah format datetime ke format 'DD Bulan YYYY' dalam bahasa Indonesia.
     
-    Args:
-        tanggal (datetime): Objek datetime yang akan diformat.
+#     Args:
+#         tanggal (datetime): Objek datetime yang akan diformat.
     
-    Returns:
-        str: Tanggal dalam format 'DD Bulan YYYY'
-    """
-    if not tanggal:
-        return "Tidak tersedia"
+#     Returns:
+#         str: Tanggal dalam format 'DD Bulan YYYY'
+#     """
+#     if not tanggal:
+#         return "Tidak tersedia"
 
-    tanggal_formatted = tanggal.strftime("%d %B %Y")  # Contoh: "21 March 2024"
+#     tanggal_formatted = tanggal.strftime("%d %B %Y")  # Contoh: "21 March 2024"
     
-    # Ganti nama bulan Inggris dengan bahasa Indonesia
-    for en, id in bulan_indonesia.items():
-        tanggal_formatted = tanggal_formatted.replace(en, id)
+#     # Ganti nama bulan Inggris dengan bahasa Indonesia
+#     for en, id in bulan_indonesia.items():
+#         tanggal_formatted = tanggal_formatted.replace(en, id)
 
-    return tanggal_formatted
+#     return tanggal_formatted
 
 #* ==================== HOME ==================== #
 
@@ -119,13 +119,13 @@ def submit_adoption():
                 "phone": data.get("telpDarurat", "")
             },
             "status": "Pending",
-            "submitted_at": datetime.now(),
+            "submission_date": datetime.now(),
+            "visit_date": "",
             "user": {
                 "name": user["name"],
                 "email": user["email"]
             }
         }
-        print("new_adoption", new_adoption)
         mongo.db.form_adoption.insert_one(new_adoption)
         return jsonify({"success": True, "message": "Formulir berhasil dikirim!"})
 
@@ -155,7 +155,7 @@ def adoption_info():
                         "name": animal_info["name"] if animal_info else "Tidak tersedia",
                         "image": animal_info["image"] if animal_info and "image" in animal_info else "static/img/default-animal.jpg"
                     },
-                    "submit_date": adoption["submitted_at"].strftime("%d-%m-%Y") if "submitted_at" in adoption else "Tidak tersedia",
+                    "submit_date": adoption["submission_date"].strftime("%d-%m-%Y") if "submission_date" in adoption else "Tidak tersedia",
                     "visit_date": adoption["visit_date"].strftime("%d-%m-%Y") if "visit_date" in adoption else "Tidak tersedia",
                     "status": adoption.get("status", "Pending")
                 })
@@ -205,8 +205,8 @@ def adoption_detail(adoption_id):
                 "desc": animal.get("desc", ""),
             },
             "status": adoption["status"],
-            "submit_date": formatDate(adoption.get("submitted_at")),
-            "visit_date": formatDate(adoption.get("visit_date"))
+            "submit_date": adoption.get("submission_date"),
+            "visit_date": adoption.get("visit_date")
         }
         # print(178, adoption_data)
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -215,7 +215,9 @@ def adoption_detail(adoption_id):
         return render_template("user/adopt/adoption_details.html", adoption_id=adoption_id, title="Detail Adopsi")
 
     except Exception as e:
-        return jsonify({"success": False, "message": f"Terjadi kesalahan: {e}"}), 500
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify({"success": False, "message": f"Terjadi kesalahan: {e}"}), 500
+        return render_template("admin/data_adopsi.html")
 
 #* ==================== TANGGAL KUNJUNGAN ==================== #
 
@@ -227,18 +229,24 @@ def tanggal_kunjungan():
         adoption_id = data.get("adoption_id")
         visit_date = data.get("visit_date")
 
+        print(1, visit_date)
+
         if not adoption_id or not visit_date:
             return jsonify({"success": False, "message": "Data tidak lengkap."}), 400
 
         # Konversi string menjadi format DateTime
-        visit_date = datetime.strptime(visit_date, "%Y-%m-%d")  
+        # visit_date = datetime.strptime(visit_date, "%Y-%m-%dT%H:%M")
+        # visit_date = datetime.strptime(visit_date, "%Y-%m-%dT%H:%M:%S.%fZ")
+        visit_date_formatted = datetime.fromisoformat(visit_date.replace("Z", "+00:00"))
+
+        print(2, visit_date_formatted)
 
         mongo.db.form_adoption.update_one(
             {"_id": ObjectId(adoption_id)},
-            {"$set": {"visit_date": visit_date}}
+            {"$set": {"visit_date": visit_date_formatted}}
         )
 
-        return jsonify({"success": True, "message": "Tanggal pengambilan berhasil disimpan."})
+        return jsonify({"success": True, "message": "Tanggal kunjungan berhasil disimpan."})
 
     except ValueError:
         return jsonify({"success": False, "message": "Format tanggal tidak valid. Gunakan YYYY-MM-DD."}), 400

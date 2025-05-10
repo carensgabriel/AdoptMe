@@ -60,7 +60,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="editRole" class="form-label">Role</label>
-                        <select class="form-control" id="editRole">
+                        <select class="form-select" id="editRole">
                             <option value="admin">Admin</option>
                             <option value="user">User</option>
                         </select>
@@ -160,7 +160,7 @@ function updateUser() {
     let userId = $("#editUserId").val();
 
     $.ajax({
-        url: `/users/${userId}/edit`,
+        url: `/admin/users/${userId}/edit`,
         type: "PUT",
         contentType: "application/json",
         data: JSON.stringify({
@@ -198,7 +198,7 @@ function handleDeleteUser() {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/users/${userId}/delete`,
+                url: `/admin/users/${userId}/delete`,
                 type: "DELETE",
                 success: function (response) {
                     if (response.success) {
