@@ -101,7 +101,7 @@
 <script>
 
 const formatDate = (date) => {
-    if (!date) return "Tidak tersedia";
+    if (date == "Invalid Date") return '<span class="text-muted">Belum Tersedia</span>';
 
     let d = new Date(date);
     
@@ -176,13 +176,6 @@ function showDataAdopsi(adoptions) {
         let adoptionStatusClass = adoption.status.toLowerCase() === "pending" ? "bg-warning text-dark" :
             adoption.status.toLowerCase() === "approved" ? "bg-success text-white" :
             "bg-danger text-white";
-
-        console.log(adoption)
-        // if (visit_date == "Tidak tersedia") {
-        //     $("#visitDate").text("Silakan Pilih Tanggal Kunjungan").css("color", "red");
-        // } else {
-        //     $("#visitDate").text(formatDateVisit(adoption.visit_date.$date));
-        // }
 
         if (adoptionId) {
             let row = `

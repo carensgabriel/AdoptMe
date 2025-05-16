@@ -91,8 +91,18 @@ def update_status():
 
         result = mongo.db.form_adoption.update_one(
             {"_id": ObjectId(adoption_id)},
-            {"$set": {"status": new_status}}
+            {"$set": {
+                "status": new_status
+            }}
         )
+
+        # !!!
+        # result_animal = mongo.db.animals.update_one(
+        #     {"_id": ObjectId(animal_id)},
+        #     {"$set": {
+        #         "status.adoption_status": (new_status == "disetujui")
+        #     }}
+        # )
         
         if result.modified_count > 0:
             return jsonify({"success": True})

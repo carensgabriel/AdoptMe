@@ -69,12 +69,10 @@
     };
 
     function formatDateIndo(isoString) {
-        // Split antara tanggal dan waktu
         let [datePart, timePart] = isoString.split("T");
         let [year, month, day] = datePart.split("-");
         let [hours, minutes] = timePart.split(":");
 
-        // Array nama bulan Indo
         const monthNames = [
             "Januari", "Februari", "Maret", "April", "Mei", "Juni",
             "Juli", "Agustus", "September", "Oktober", "November", "Desember"
@@ -120,7 +118,7 @@
             success: function(response) {
                 if (response.success) {
                     let adoption = response.adoption;
-                    
+                    console.log(121, adoption)
                     let datebirth = new Date(adoption.animal.datebirth.$date);
                     let adoptionStatusClass = adoption.status.toLowerCase() === "pending" ? "bg-warning text-dark" :
                           adoption.status.toLowerCase() === "approved" ? "bg-success text-white" :
@@ -130,7 +128,7 @@
                     $("#submitDate").text(formatDateIndo(adoption.submit_date.$date));
 
                     if (adoption.status.toLowerCase() === "approved") {
-                        if (adoption.visit_date == "Tidak tersedia") {
+                        if (adoption.visit_date == "") {
                             $("#visitDate").text("Silakan Pilih Tanggal Kunjungan").css("color", "red");
                         } else {
                             $("#visitDate").text(formatDateIndo(adoption.visit_date.$date));

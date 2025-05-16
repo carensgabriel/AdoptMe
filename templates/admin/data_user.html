@@ -74,6 +74,7 @@
 
 <script>
 $(document).ready(function () {
+    jQuery("#loading-screen").show();
     renderDataUsers();
     $("#filterRole").on("change", function () {
         renderDataUsers();
@@ -96,9 +97,11 @@ function renderDataUsers() {
             } else {
                 showAlertMessage("Gagal mengambil data pengguna.");
             }
+            jQuery("#loading-screen").hide();
         },
         error: function () {
             showAlertMessage("Terjadi kesalahan server.");
+            jQuery("#loading-screen").hide();
         }
     });
 }
@@ -136,6 +139,7 @@ function getDataUser(users) {
             </tr>
         `;
         $("#usersTable").append(row);
+        jQuery("#loading-screen").hide();
     });
 
     $(".edit-btn").on("click", handleEditUser);

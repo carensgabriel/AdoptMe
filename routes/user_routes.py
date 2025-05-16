@@ -206,7 +206,7 @@ def adoption_detail(adoption_id):
             },
             "status": adoption["status"],
             "submit_date": adoption.get("submission_date"),
-            "visit_date": adoption.get("visit_date")
+            "visit_date": adoption.get("visit_date", "")
         }
         # print(178, adoption_data)
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":

@@ -82,7 +82,7 @@
 const formatDate = (date) => date ? new Date(date).toLocaleDateString("id-ID") : "Tidak tersedia";
 
 const formatDateVisit = (date) => {
-    if (!date) return "Tidak tersedia";
+    if (!date) return '<span class="text-muted">Belum Tersedia</span>';
 
     let d = new Date(date);
     
@@ -122,8 +122,8 @@ function getAdoptionData(adoptionId) {
         success: function(response) {
             let adoption = response.data;
             
-            $("#submitDate").text(formatDateVisit(adoption.submission_date));
-            $("#visitDate").text(formatDateVisit(adoption.visit_date));
+            $("#submitDate").html(formatDateVisit(adoption.submission_date));
+            $("#visitDate").html(formatDateVisit(adoption.visit_date));
 
             let adopter = `<tr>
                 <td>${adoption.adopter.name}</td>
